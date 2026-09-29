@@ -1,4 +1,10 @@
-import { LibraryBig, ShieldCheck, Tags } from "lucide-react";
+import Link from "next/link";
+import {
+  LibraryBig,
+  Plus,
+  ShieldCheck,
+  Tags,
+} from "lucide-react";
 
 import { EvidenceRow } from "@/components/evidence/evidence-row";
 import { AppShell } from "@/components/shell/app-shell";
@@ -16,20 +22,34 @@ export default function ArmoryPage() {
   return (
     <AppShell sectionLabel="Armory">
       <div className="mx-auto w-full max-w-[1440px] px-4 py-7 sm:px-6 sm:py-8 lg:px-8 lg:py-10 xl:px-10">
-        <div className="border-b border-border-subtle pb-7">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-gold">
-            Armory
-          </p>
+        <div className="flex flex-col gap-5 border-b border-border-subtle pb-7 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-gold">
+              Armory
+            </p>
 
-          <h1 className="mt-2 text-[22px] font-semibold tracking-[-0.02em] text-text-primary sm:text-[24px]">
-            Your evidence, organized.
-          </h1>
+            <h1 className="mt-2 text-[22px] font-semibold tracking-[-0.02em] text-text-primary sm:text-[24px]">
+              Your evidence, organized.
+            </h1>
 
-          <p className="mt-2 max-w-2xl text-[13px] leading-5 text-text-secondary">
-            The Armory is the structured record of projects, experience,
-            certifications, education, and artifacts that The Continental can
-            use to support career claims.
-          </p>
+            <p className="mt-2 max-w-2xl text-[13px] leading-5 text-text-secondary">
+              The Armory is the structured record of projects, experience,
+              certifications, education, and artifacts that The Continental can
+              use to support career claims.
+            </p>
+          </div>
+
+          <Link
+            href="/armory/new"
+            className="inline-flex h-9 w-fit shrink-0 items-center gap-2 rounded-md bg-gold px-3.5 text-[13px] font-semibold text-text-inverse transition-colors duration-150 hover:bg-gold-hover active:bg-gold-active"
+          >
+            <Plus
+              aria-hidden="true"
+              className="size-4"
+              strokeWidth={1.8}
+            />
+            Add Evidence
+          </Link>
         </div>
 
         <section
