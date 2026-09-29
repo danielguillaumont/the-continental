@@ -1,5 +1,6 @@
-from datetime import date
+from datetime import date, datetime
 from typing import Literal
+from uuid import UUID
 
 from pydantic import BaseModel, Field, HttpUrl, field_validator
 
@@ -54,6 +55,19 @@ class EvidenceCreate(BaseModel):
             raise ValueError("At least one skill is required.")
 
         return normalized
+
+
+class EvidenceRead(BaseModel):
+    id: UUID
+    kind: EvidenceKind
+    title: str
+    description: str
+    skills: list[str]
+    status: EvidenceStatus
+    source: EvidenceSource | None = None
+    occurredAt: date | None = None
+    createdAt: datetime
+    updatedAt: datetime
 
 
 class EvidenceValidationResponse(BaseModel):
