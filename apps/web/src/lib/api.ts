@@ -29,7 +29,7 @@ async function getErrorMessage(response: Response) {
     }
 
     if (body.detail) {
-      return "The API rejected this evidence record.";
+      return "The API rejected this request.";
     }
   } catch {
     // Fall through to the generic message.
@@ -58,6 +58,20 @@ export async function createEvidence(
 
 export async function listEvidence(): Promise<EvidenceRecord[]> {
   const response = await fetch(`${API_BASE_URL}/evidence`);
+
+  if (!response.ok) {
+    throw new Error(await getErrorMessage(response));
+  }
+
+  return response.json();
+}
+
+export async function getEvidence(
+  evidenceId: string,
+): Promise<EvidenceRecord> {
+  const response = await fetch(
+    `${API_BASE_URL}/evidence/${evidenceId}`,
+  );
 
   if (!response.ok) {
     throw new Error(await getErrorMessage(response));

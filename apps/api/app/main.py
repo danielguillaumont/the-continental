@@ -1,4 +1,6 @@
-from fastapi import Depends, FastAPI, status
+from uuid import UUID
+
+from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -119,6 +121,26 @@ def create_evidence(
     session.add(record)
     session.commit()
     session.refresh(record)
+
+    return evidence_to_response(record)
+
+
+@app.get(
+    "/evidence/{evidence_id}",
+    response_model=EvidenceRead,
+    tags=["Evidence"],
+)
+def get_evidence(
+    evidence_id: UUID,
+    session: Session = Depends(get_database_session),
+) -> EvidenceRead:
+    record = session.get(Evidence, evidence_id)
+
+    if record is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Evidence record not found.",
+        )
 
     return evidence_to_response(record)
 
