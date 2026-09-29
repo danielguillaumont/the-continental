@@ -7,7 +7,7 @@ import type {
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
 
-export type EvidenceCreatePayload = {
+export type EvidenceWritePayload = {
   kind: EvidenceKind;
   title: string;
   description: string;
@@ -39,7 +39,7 @@ async function getErrorMessage(response: Response) {
 }
 
 export async function createEvidence(
-  payload: EvidenceCreatePayload,
+  payload: EvidenceWritePayload,
 ): Promise<EvidenceRecord> {
   const response = await fetch(`${API_BASE_URL}/evidence`, {
     method: "POST",
@@ -48,6 +48,28 @@ export async function createEvidence(
     },
     body: JSON.stringify(payload),
   });
+
+  if (!response.ok) {
+    throw new Error(await getErrorMessage(response));
+  }
+
+  return response.json();
+}
+
+export async function updateEvidence(
+  evidenceId: string,
+  payload: EvidenceWritePayload,
+): Promise<EvidenceRecord> {
+  const response = await fetch(
+    `${API_BASE_URL}/evidence/${evidenceId}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    },
+  );
 
   if (!response.ok) {
     throw new Error(await getErrorMessage(response));

@@ -9,9 +9,13 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
-import { createEvidence } from "@/lib/api";
+import {
+  createEvidence,
+  updateEvidence,
+} from "@/lib/api";
 import type {
   EvidenceKind,
+  EvidenceRecord,
   EvidenceStatus,
 } from "@/types/evidence";
 
@@ -28,7 +32,11 @@ type EvidenceDraft = {
 
 type FormErrors = Partial<Record<keyof EvidenceDraft, string>>;
 
-const initialDraft: EvidenceDraft = {
+type EvidenceFormProps = {
+  evidence?: EvidenceRecord;
+};
+
+const emptyDraft: EvidenceDraft = {
   kind: "project",
   title: "",
   description: "",
@@ -50,6 +58,25 @@ const evidenceKinds: {
   { value: "artifact", label: "Artifact" },
 ];
 
+function evidenceToDraft(
+  evidence?: EvidenceRecord,
+): EvidenceDraft {
+  if (!evidence) {
+    return emptyDraft;
+  }
+
+  return {
+    kind: evidence.kind,
+    title: evidence.title,
+    description: evidence.description,
+    skills: evidence.skills.join(", "),
+    status: evidence.status,
+    sourceLabel: evidence.source?.label ?? "",
+    sourceUrl: evidence.source?.url ?? "",
+    occurredAt: evidence.occurredAt ?? "",
+  };
+}
+
 function isValidHttpUrl(value: string) {
   try {
     const url = new URL(value);
@@ -60,14 +87,20 @@ function isValidHttpUrl(value: string) {
   }
 }
 
-export function EvidenceForm() {
+export function EvidenceForm({
+  evidence,
+}: EvidenceFormProps) {
   const router = useRouter();
+  const editing = Boolean(evidence);
 
-  const [draft, setDraft] = useState<EvidenceDraft>(initialDraft);
+  const [draft, setDraft] = useState<EvidenceDraft>(() =>
+    evidenceToDraft(evidence),
+  );
   const [errors, setErrors] = useState<FormErrors>({});
   const [reviewed, setReviewed] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitError, setSubmitError] =
+    useState<string | null>(null);
 
   const parsedSkills = useMemo(
     () =>
@@ -151,30 +184,42 @@ export function EvidenceForm() {
 
     setIsSaving(true);
 
-    try {
-      await createEvidence({
-        kind: draft.kind,
-        title: draft.title.trim(),
-        description: draft.description.trim(),
-        skills: parsedSkills,
-        status: draft.status,
-        source: draft.sourceLabel.trim()
-          ? {
-              label: draft.sourceLabel.trim(),
-              ...(draft.sourceUrl.trim()
-                ? { url: draft.sourceUrl.trim() }
-                : {}),
-            }
-          : undefined,
-        occurredAt: draft.occurredAt || undefined,
-      });
+    const payload = {
+      kind: draft.kind,
+      title: draft.title.trim(),
+      description: draft.description.trim(),
+      skills: parsedSkills,
+      status: draft.status,
+      source: draft.sourceLabel.trim()
+        ? {
+            label: draft.sourceLabel.trim(),
+            ...(draft.sourceUrl.trim()
+              ? { url: draft.sourceUrl.trim() }
+              : {}),
+          }
+        : undefined,
+      occurredAt: draft.occurredAt || undefined,
+    };
 
-      router.push("/armory");
+    try {
+      if (evidence) {
+        await updateEvidence(evidence.id, payload);
+
+        router.push(`/armory/${evidence.id}`);
+      } else {
+        await createEvidence(payload);
+
+        router.push("/armory");
+      }
+
+      router.refresh();
     } catch (error) {
       setSubmitError(
         error instanceof Error
           ? error.message
-          : "Evidence could not be saved.",
+          : editing
+            ? "Evidence could not be updated."
+            : "Evidence could not be saved.",
       );
     } finally {
       setIsSaving(false);
@@ -201,7 +246,9 @@ export function EvidenceForm() {
           </div>
 
           <p className="mt-1 text-[12px] leading-5 text-text-muted">
-            Describe something real that can support a future career claim.
+            {editing
+              ? "Update the structured evidence behind this career record."
+              : "Describe something real that can support a future career claim."}
           </p>
         </div>
 
@@ -259,6 +306,7 @@ export function EvidenceForm() {
                 <option value="unverified">
                   Unverified
                 </option>
+
                 <option value="verified">
                   Verified by me
                 </option>
@@ -305,7 +353,10 @@ export function EvidenceForm() {
               rows={5}
               value={draft.description}
               onChange={(event) =>
-                updateField("description", event.target.value)
+                updateField(
+                  "description",
+                  event.target.value,
+                )
               }
               placeholder="What did you build, do, learn, or prove?"
               className="w-full resize-y rounded-md border border-border bg-surface-raised px-3 py-2.5 text-[13px] leading-5 text-text-primary outline-none transition-colors placeholder:text-text-disabled focus:border-gold"
@@ -440,14 +491,16 @@ export function EvidenceForm() {
 
             <div>
               <p className="text-[13px] font-semibold text-success-text">
-                Evidence record is ready to save.
+                Evidence record is ready to{" "}
+                {editing ? "update" : "save"}.
               </p>
 
               <p className="mt-1 text-[12px] leading-5 text-text-secondary">
                 {parsedSkills.length} skill
                 {parsedSkills.length === 1 ? "" : "s"} linked.
-                Save Evidence will write this record to The
-                Continental database.
+                {editing
+                  ? " Save Changes will update this record in The Continental database."
+                  : " Save Evidence will write this record to The Continental database."}
               </p>
             </div>
           </div>
@@ -465,7 +518,8 @@ export function EvidenceForm() {
 
             <div>
               <p className="text-[13px] font-semibold text-danger-text">
-                Evidence could not be saved.
+                Evidence could not be{" "}
+                {editing ? "updated" : "saved"}.
               </p>
 
               <p className="mt-1 text-[12px] leading-5 text-text-secondary">
@@ -485,7 +539,9 @@ export function EvidenceForm() {
           />
 
           {reviewed
-            ? "Validated locally and ready for persistence."
+            ? `Validated locally and ready to ${
+                editing ? "update" : "save"
+              }.`
             : "Review the record before saving."}
         </div>
 
@@ -495,9 +551,13 @@ export function EvidenceForm() {
           className="inline-flex h-9 w-fit items-center justify-center rounded-md bg-gold px-4 text-[13px] font-semibold text-text-inverse transition-colors duration-150 hover:bg-gold-hover active:bg-gold-active disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isSaving
-            ? "Saving..."
+            ? editing
+              ? "Saving Changes..."
+              : "Saving..."
             : reviewed
-              ? "Save Evidence"
+              ? editing
+                ? "Save Changes"
+                : "Save Evidence"
               : "Review Evidence"}
         </button>
       </div>
