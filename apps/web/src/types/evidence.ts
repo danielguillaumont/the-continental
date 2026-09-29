@@ -11,7 +11,7 @@ export type EvidenceStatus =
 
 export type EvidenceSource = {
   label: string;
-  url?: string;
+  url?: string | null;
 };
 
 export type EvidenceRecord = {
@@ -21,8 +21,8 @@ export type EvidenceRecord = {
   description: string;
   skills: string[];
   status: EvidenceStatus;
-  source?: EvidenceSource;
-  occurredAt?: string;
+  source?: EvidenceSource | null;
+  occurredAt?: string | null;
   createdAt: string;
   updatedAt: string;
 };

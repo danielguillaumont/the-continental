@@ -12,27 +12,30 @@ The Continental is a career intelligence platform that turns projects, experienc
 
 **v0.1 — My Evidence is in progress.**
 
-The visual foundation is complete and the first product area, the **Armory**, is working.
+The Continental now has a working end-to-end evidence flow backed by PostgreSQL.
 
 ### Working
 
 - Responsive Next.js application shell
 - Lobby dashboard
 - Armory evidence library
+- Add Evidence workflow
+- FastAPI backend
+- PostgreSQL persistence
+- SQLAlchemy data model
+- Alembic migrations
+- Evidence validation with Pydantic
+- Database-backed evidence summaries and skill counts
 - Desktop and mobile navigation
-- Structured `EvidenceRecord` model
-- Verification states and skill summaries
-- Reusable component architecture
-- Frontend lint and production builds
 
 ### Next
 
-- Add Evidence flow
-- Projects and experience records
 - Evidence detail views
+- Edit and delete evidence
+- Experience and project relationships
 - Skill relationships
 - Search and filtering
-- Backend persistence
+- Continue building the Armory
 
 ---
 
@@ -70,44 +73,53 @@ Only working product areas are exposed in the application.
 
 ## Tech Stack
 
-### Current
-
 - Next.js 16
 - React 19
 - TypeScript
 - Tailwind CSS 4
-- Lucide React
-
-### Planned
-
-- Python + FastAPI
-- PostgreSQL
+- FastAPI
 - Pydantic
-- GitHub Actions
-- Grounded AI features after the evidence layer is reliable
+- SQLAlchemy
+- PostgreSQL 17
+- Alembic
+- Docker Compose
 
 ---
 
 ## Run Locally
 
+Start PostgreSQL:
+
 ```bash
-git clone https://github.com/danielguillaumont/the-continental.git
-cd the-continental/apps/web
+docker compose up -d postgres
+```
+
+Start the API:
+
+```bash
+cd apps/api
+.\.venv\Scripts\Activate.ps1
+uvicorn app.main:app --reload --port 8000
+```
+
+Start the web app:
+
+```bash
+cd apps/web
 npm install
 npm run dev
 ```
 
-Open:
+Web app:
 
 ```text
 http://localhost:3000
 ```
 
-Checks:
+API docs:
 
-```bash
-npm run lint
-npm run build
+```text
+http://127.0.0.1:8000/docs
 ```
 
 ---
@@ -139,6 +151,4 @@ npm run build
 
 ## Development
 
-The Continental is under active development.
-
-The repository is intentionally public so its progression from structured career data to grounded AI workflows can be followed through the commit history.
+The Continental is under active development and intentionally public so its progression from structured career data to grounded AI workflows can be followed through the commit history.

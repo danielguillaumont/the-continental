@@ -6,7 +6,7 @@ function formatKind(kind: EvidenceRecord["kind"]) {
   return kind.charAt(0).toUpperCase() + kind.slice(1);
 }
 
-function formatEvidenceDate(value?: string) {
+function formatEvidenceDate(value?: string | null) {
   if (!value) {
     return "No date";
   }
