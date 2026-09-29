@@ -12,7 +12,7 @@ The Continental is a career intelligence platform that turns projects, experienc
 
 **v0.1 — My Evidence is in progress.**
 
-The Continental now has a working end-to-end evidence flow backed by PostgreSQL.
+The Continental now has a working database-backed evidence system with creation, persistence, listing, and individual evidence inspection.
 
 ### Working
 
@@ -20,17 +20,18 @@ The Continental now has a working end-to-end evidence flow backed by PostgreSQL.
 - Lobby dashboard
 - Armory evidence library
 - Add Evidence workflow
+- Evidence detail views
 - FastAPI backend
 - PostgreSQL persistence
 - SQLAlchemy data model
 - Alembic migrations
 - Evidence validation with Pydantic
 - Database-backed evidence summaries and skill counts
+- Evidence provenance and record history
 - Desktop and mobile navigation
 
 ### Next
 
-- Evidence detail views
 - Edit and delete evidence
 - Experience and project relationships
 - Skill relationships
