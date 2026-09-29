@@ -1,12 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import {
+  AlertCircle,
   CheckCircle2,
   FilePlus2,
   ShieldCheck,
 } from "lucide-react";
 
+import { createEvidence } from "@/lib/api";
 import type {
   EvidenceKind,
   EvidenceStatus,
@@ -40,26 +43,11 @@ const evidenceKinds: {
   value: EvidenceKind;
   label: string;
 }[] = [
-  {
-    value: "project",
-    label: "Project",
-  },
-  {
-    value: "experience",
-    label: "Experience",
-  },
-  {
-    value: "certification",
-    label: "Certification",
-  },
-  {
-    value: "education",
-    label: "Education",
-  },
-  {
-    value: "artifact",
-    label: "Artifact",
-  },
+  { value: "project", label: "Project" },
+  { value: "experience", label: "Experience" },
+  { value: "certification", label: "Certification" },
+  { value: "education", label: "Education" },
+  { value: "artifact", label: "Artifact" },
 ];
 
 function isValidHttpUrl(value: string) {
@@ -73,9 +61,13 @@ function isValidHttpUrl(value: string) {
 }
 
 export function EvidenceForm() {
+  const router = useRouter();
+
   const [draft, setDraft] = useState<EvidenceDraft>(initialDraft);
   const [errors, setErrors] = useState<FormErrors>({});
   const [reviewed, setReviewed] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const parsedSkills = useMemo(
     () =>
@@ -101,6 +93,7 @@ export function EvidenceForm() {
     }));
 
     setReviewed(false);
+    setSubmitError(null);
   }
 
   function validate() {
@@ -119,8 +112,20 @@ export function EvidenceForm() {
       nextErrors.skills = "Add at least one skill.";
     }
 
-    if (draft.sourceUrl.trim() && !isValidHttpUrl(draft.sourceUrl.trim())) {
-      nextErrors.sourceUrl = "Enter a valid http:// or https:// URL.";
+    if (
+      draft.sourceUrl.trim() &&
+      !draft.sourceLabel.trim()
+    ) {
+      nextErrors.sourceLabel =
+        "Add a source label when providing a URL.";
+    }
+
+    if (
+      draft.sourceUrl.trim() &&
+      !isValidHttpUrl(draft.sourceUrl.trim())
+    ) {
+      nextErrors.sourceUrl =
+        "Enter a valid http:// or https:// URL.";
     }
 
     setErrors(nextErrors);
@@ -128,15 +133,52 @@ export function EvidenceForm() {
     return Object.keys(nextErrors).length === 0;
   }
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(
+    event: FormEvent<HTMLFormElement>,
+  ) {
     event.preventDefault();
+    setSubmitError(null);
 
     if (!validate()) {
       setReviewed(false);
       return;
     }
 
-    setReviewed(true);
+    if (!reviewed) {
+      setReviewed(true);
+      return;
+    }
+
+    setIsSaving(true);
+
+    try {
+      await createEvidence({
+        kind: draft.kind,
+        title: draft.title.trim(),
+        description: draft.description.trim(),
+        skills: parsedSkills,
+        status: draft.status,
+        source: draft.sourceLabel.trim()
+          ? {
+              label: draft.sourceLabel.trim(),
+              ...(draft.sourceUrl.trim()
+                ? { url: draft.sourceUrl.trim() }
+                : {}),
+            }
+          : undefined,
+        occurredAt: draft.occurredAt || undefined,
+      });
+
+      router.push("/armory");
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error
+          ? error.message
+          : "Evidence could not be saved.",
+      );
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   return (
@@ -214,8 +256,12 @@ export function EvidenceForm() {
                 }
                 className="h-10 w-full rounded-md border border-border bg-surface-raised px-3 text-[13px] text-text-primary outline-none transition-colors focus:border-gold"
               >
-                <option value="unverified">Unverified</option>
-                <option value="verified">Verified by me</option>
+                <option value="unverified">
+                  Unverified
+                </option>
+                <option value="verified">
+                  Verified by me
+                </option>
               </select>
             </div>
           </div>
@@ -316,11 +362,20 @@ export function EvidenceForm() {
                 type="text"
                 value={draft.sourceLabel}
                 onChange={(event) =>
-                  updateField("sourceLabel", event.target.value)
+                  updateField(
+                    "sourceLabel",
+                    event.target.value,
+                  )
                 }
                 placeholder="GitHub repository"
                 className="h-10 w-full rounded-md border border-border bg-surface-raised px-3 text-[13px] text-text-primary outline-none transition-colors placeholder:text-text-disabled focus:border-gold"
               />
+
+              {errors.sourceLabel ? (
+                <p className="mt-1.5 text-[11px] text-danger-text">
+                  {errors.sourceLabel}
+                </p>
+              ) : null}
             </div>
 
             <div>
@@ -336,7 +391,10 @@ export function EvidenceForm() {
                 type="date"
                 value={draft.occurredAt}
                 onChange={(event) =>
-                  updateField("occurredAt", event.target.value)
+                  updateField(
+                    "occurredAt",
+                    event.target.value,
+                  )
                 }
                 className="h-10 w-full rounded-md border border-border bg-surface-raised px-3 text-[13px] text-text-primary outline-none transition-colors focus:border-gold"
               />
@@ -382,13 +440,36 @@ export function EvidenceForm() {
 
             <div>
               <p className="text-[13px] font-semibold text-success-text">
-                Evidence record is valid.
+                Evidence record is ready to save.
               </p>
 
               <p className="mt-1 text-[12px] leading-5 text-text-secondary">
                 {parsedSkills.length} skill
-                {parsedSkills.length === 1 ? "" : "s"} linked. Persistence is
-                the next implementation step.
+                {parsedSkills.length === 1 ? "" : "s"} linked.
+                Save Evidence will write this record to The
+                Continental database.
+              </p>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {submitError ? (
+        <div className="rounded-lg border border-danger-border bg-danger-surface p-4">
+          <div className="flex items-start gap-3">
+            <AlertCircle
+              aria-hidden="true"
+              className="mt-0.5 size-4 shrink-0 text-danger-text"
+              strokeWidth={1.8}
+            />
+
+            <div>
+              <p className="text-[13px] font-semibold text-danger-text">
+                Evidence could not be saved.
+              </p>
+
+              <p className="mt-1 text-[12px] leading-5 text-text-secondary">
+                {submitError}
               </p>
             </div>
           </div>
@@ -403,14 +484,21 @@ export function EvidenceForm() {
             strokeWidth={1.8}
           />
 
-          Nothing is saved yet.
+          {reviewed
+            ? "Validated locally and ready for persistence."
+            : "Review the record before saving."}
         </div>
 
         <button
           type="submit"
-          className="inline-flex h-9 w-fit items-center justify-center rounded-md bg-gold px-4 text-[13px] font-semibold text-text-inverse transition-colors duration-150 hover:bg-gold-hover active:bg-gold-active"
+          disabled={isSaving}
+          className="inline-flex h-9 w-fit items-center justify-center rounded-md bg-gold px-4 text-[13px] font-semibold text-text-inverse transition-colors duration-150 hover:bg-gold-hover active:bg-gold-active disabled:cursor-not-allowed disabled:opacity-60"
         >
-          Review Evidence
+          {isSaving
+            ? "Saving..."
+            : reviewed
+              ? "Save Evidence"
+              : "Review Evidence"}
         </button>
       </div>
     </form>
