@@ -1,21 +1,40 @@
 import { ShieldCheck } from "lucide-react";
 
-import type { EvidenceItem } from "@/data/lobby";
+import type { EvidenceRecord } from "@/types/evidence";
+
+function formatKind(kind: EvidenceRecord["kind"]) {
+  return kind.charAt(0).toUpperCase() + kind.slice(1);
+}
+
+function formatEvidenceDate(value?: string) {
+  if (!value) {
+    return "No date";
+  }
+
+  const date = new Date(`${value}T00:00:00`);
+
+  return new Intl.DateTimeFormat("en", {
+    month: "short",
+    year: "numeric",
+  }).format(date);
+}
 
 export function EvidenceRow({
-  source,
+  kind,
   title,
   description,
   skills,
-  date,
-  verified,
-}: EvidenceItem) {
+  status,
+  occurredAt,
+}: EvidenceRecord) {
+  const verified = status === "verified";
+
   return (
     <article className="group border-b border-border-subtle px-4 py-4 transition-colors duration-150 last:border-b-0 hover:bg-surface-hover sm:px-5">
       <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-2">
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-text-muted">
-            {source}
+            {formatKind(kind)}
           </span>
 
           {verified ? (
@@ -31,7 +50,7 @@ export function EvidenceRow({
         </div>
 
         <span className="font-technical text-[11px] text-text-muted">
-          {date}
+          {formatEvidenceDate(occurredAt)}
         </span>
       </div>
 

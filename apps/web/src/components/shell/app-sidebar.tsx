@@ -1,21 +1,36 @@
-import { LayoutDashboard, Settings2 } from "lucide-react";
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import {
+  LayoutDashboard,
+  LibraryBig,
+  type LucideIcon,
+} from "lucide-react";
 
 import { BrandMark } from "@/components/shell/brand-mark";
 
 function SidebarItem({
   icon: Icon,
   label,
-  active = false,
+  href,
   onSelect,
 }: {
-  icon: typeof LayoutDashboard;
+  icon: LucideIcon;
   label: string;
-  active?: boolean;
+  href: string;
   onSelect?: () => void;
 }) {
+  const pathname = usePathname();
+
+  const active =
+    href === "/"
+      ? pathname === "/"
+      : pathname === href || pathname.startsWith(`${href}/`);
+
   return (
-    <button
-      type="button"
+    <Link
+      href={href}
       onClick={onSelect}
       className={[
         "relative flex h-9 w-full items-center gap-2.5 rounded-md px-2.5 text-left text-[13px] font-medium transition-colors duration-150",
@@ -35,7 +50,7 @@ function SidebarItem({
       />
 
       <span>{label}</span>
-    </button>
+    </Link>
   );
 }
 
@@ -53,15 +68,14 @@ export function SidebarNavigation({
         <SidebarItem
           icon={LayoutDashboard}
           label="Lobby"
-          active
+          href="/"
           onSelect={onNavigate}
         />
-      </div>
 
-      <div className="mt-auto">
         <SidebarItem
-          icon={Settings2}
-          label="Settings"
+          icon={LibraryBig}
+          label="Armory"
+          href="/armory"
           onSelect={onNavigate}
         />
       </div>
@@ -81,7 +95,7 @@ export function AppSidebar() {
       <div className="border-t border-border-subtle px-5 py-4">
         <div className="flex items-center gap-2 text-[11px] text-text-muted">
           <span className="size-1.5 rounded-full bg-success" />
-          <span>v0.0 · Foundation</span>
+          <span>v0.1 · Evidence</span>
         </div>
       </div>
     </aside>

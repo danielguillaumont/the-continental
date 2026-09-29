@@ -1,9 +1,11 @@
 import { Menu } from "lucide-react";
 
 export function ContextBar({
+  sectionLabel,
   mobileMenuOpen,
   onOpenMobileMenu,
 }: {
+  sectionLabel: string;
   mobileMenuOpen: boolean;
   onOpenMobileMenu: () => void;
 }) {
@@ -31,8 +33,8 @@ export function ContextBar({
               THE CONTINENTAL
             </div>
 
-            <div className="text-[10px] uppercase tracking-[0.15em] text-text-muted">
-              Lobby
+            <div className="truncate text-[10px] uppercase tracking-[0.15em] text-text-muted">
+              {sectionLabel}
             </div>
           </div>
         </div>
@@ -49,11 +51,11 @@ export function ContextBar({
             /
           </span>
 
-          <span className="truncate">Lobby</span>
+          <span className="truncate">{sectionLabel}</span>
         </div>
 
         <div className="font-technical text-[10px] uppercase tracking-[0.1em] text-text-muted">
-          v0.0
+          v0.1
         </div>
       </div>
     </header>

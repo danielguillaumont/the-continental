@@ -7,8 +7,10 @@ import { ContextBar } from "@/components/shell/context-bar";
 import { MobileNavigation } from "@/components/shell/mobile-navigation";
 
 export function AppShell({
+  sectionLabel,
   children,
 }: {
+  sectionLabel: string;
   children: ReactNode;
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -44,6 +46,7 @@ export function AppShell({
       />
 
       <ContextBar
+        sectionLabel={sectionLabel}
         mobileMenuOpen={mobileMenuOpen}
         onOpenMobileMenu={() => setMobileMenuOpen(true)}
       />

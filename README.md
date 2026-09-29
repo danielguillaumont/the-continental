@@ -1,97 +1,144 @@
 # The Continental
 
-An AI career intelligence and operations platform built around evidence, not vague skill claims.
+**Career intelligence built around evidence, not vague claims.**
 
-The Continental builds a structured picture of what a user has actually done, then uses that evidence to understand opportunities, prepare grounded application material, identify skill gaps, manage recruiting workflows, and preserve career knowledge over time.
+The Continental is a career intelligence platform that turns projects, experience, certifications, skills, and other career evidence into structured data for opportunity analysis, applications, interview preparation, and future grounded AI workflows.
 
-## North Star
+**Evidence → Understand Opportunity → Take Action → Create Better Evidence**
 
-**Turn real career evidence into useful, grounded actions.**
-
-The Continental is not another resume scorer and it is not another generic AI chat box.
-
-## Product Loop
-
-**Evidence → Understand Opportunity → Take Grounded Action → Create Better Evidence → Remember the Outcome**
+---
 
 ## Current Status
 
-The project is currently in **v0.0 — Foundation**.
+**v0.1 — My Evidence is in progress.**
 
-The initial visual and product foundation has been defined, including:
+The visual foundation is complete and the first product area, the **Armory**, is working.
 
-- product vision
-- design principles
-- visual references
-- design system
-- repository structure
+### Working
 
-Frontend and backend implementation come next.
+- Responsive Next.js application shell
+- Lobby dashboard
+- Armory evidence library
+- Desktop and mobile navigation
+- Structured `EvidenceRecord` model
+- Verification states and skill summaries
+- Reusable component architecture
+- Frontend lint and production builds
 
-## Planned Stack
+### Next
 
-- **Frontend:** Next.js + TypeScript
-- **API:** Python + FastAPI
-- **Database:** PostgreSQL
-- **UI:** Tailwind CSS with accessible component primitives
-- **CI:** GitHub Actions
-- **AI:** Provider abstraction with structured, validated outputs
+- Add Evidence flow
+- Projects and experience records
+- Evidence detail views
+- Skill relationships
+- Search and filtering
+- Backend persistence
 
-Technologies will only be added when the product has a real reason for them.
+---
 
-## Design Direction
+## The Idea
 
-The Continental should feel like a serious modern productivity product with a subtle luxury-hospitality influence.
+Most career tools treat a resume as the database.
 
-The visual direction combines:
+The Continental treats the resume as an output. The source of truth is the evidence behind a career:
 
-- calm information density
-- layered charcoal surfaces
-- warm ivory typography
-- restrained antique gold accents
-- clear provenance and system state
-- compact, professional interaction patterns
+- work completed
+- projects built
+- technologies used
+- certifications earned
+- artifacts created
+- skills supported by real examples
 
-The John Wick / Continental inspiration stays subtle. This is a professional software product, not a fan site.
+Future AI features will operate on this evidence instead of inventing it.
 
-## Documentation
+---
 
-Product and design documentation lives under:
+## Product Areas
 
-```text
-docs/product/
-├── vision.md
-├── design-principles.md
-├── design-references.md
-└── design-system.md
+| Area | Purpose |
+| --- | --- |
+| **Lobby** | Home workspace and current priorities |
+| **Armory** | Career evidence, projects, experience, and skills |
+| **Dossier** | Opportunity analysis |
+| **Contracts** | Bounded missions for closing evidence gaps |
+| **Archive** | Applications, interviews, and outcomes |
+| **High Table** | Career and opportunity intelligence |
+
+Only working product areas are exposed in the application.
+
+---
+
+## Tech Stack
+
+### Current
+
+- Next.js 16
+- React 19
+- TypeScript
+- Tailwind CSS 4
+- Lucide React
+
+### Planned
+
+- Python + FastAPI
+- PostgreSQL
+- Pydantic
+- GitHub Actions
+- Grounded AI features after the evidence layer is reliable
+
+---
+
+## Run Locally
+
+```bash
+git clone https://github.com/danielguillaumont/the-continental.git
+cd the-continental/apps/web
+npm install
+npm run dev
 ```
 
-Architecture and implementation documentation will grow alongside the product.
+Open:
+
+```text
+http://localhost:3000
+```
+
+Checks:
+
+```bash
+npm run lint
+npm run build
+```
+
+---
 
 ## Roadmap
 
-The project is intentionally incremental.
+| Version | Focus |
+| --- | --- |
+| v0.0 | Foundation |
+| **v0.1** | **My Evidence** |
+| v0.2 | Dossier |
+| v0.3 | Evidence Match |
+| v0.4 | Import |
+| v0.5 | Armory Generation |
+| v0.6+ | Contracts, Archive, workflows, integrations, intelligence |
+| v1.0 | Reliable first major release |
 
-Early releases focus on:
+---
 
-1. **v0.0 — Foundation**
-2. **v0.1 — My Evidence**
-3. **v0.2 — Dossier**
-4. **v0.3 — Evidence Match**
-5. **v0.4 — Import**
-6. **v0.5 — Armory**
-7. **v0.6 — Contracts**
-8. **v0.7 — Archive**
-9. **v0.8 — Winston**
-10. **v0.9 — Charon**
-11. **v0.10 — High Table**
-12. **v0.11 — Interview Room**
-13. **v0.12 — Evals & AgentOps**
-14. **v0.13 — Public Beta**
-15. **v1.0 — The Continental**
+## Product Principles
 
-Each release should leave the project with one coherent new capability that works end-to-end.
+- Data first, AI second.
+- Evidence is the source of truth.
+- AI output should be grounded and inspectable.
+- Only expose features that actually work.
+- Add complexity only when the product requires it.
 
-## Status
+---
 
-Early development. The repository is being built publicly so the architecture, product decisions, and implementation history remain visible as the project evolves.
+## Development
+
+The Continental is under active development.
+
+The repository is intentionally public so its progression from structured career data to grounded AI workflows can be followed through the commit history.

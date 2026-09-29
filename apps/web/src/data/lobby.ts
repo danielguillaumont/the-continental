@@ -1,44 +1,55 @@
-export type EvidenceItem = {
-  source: string;
-  title: string;
-  description: string;
-  skills: string[];
-  date: string;
-  verified: boolean;
-};
+import type { EvidenceRecord } from "@/types/evidence";
 
 export type GettingStartedItem = {
   label: string;
   complete: boolean;
 };
 
-export const evidenceItems: EvidenceItem[] = [
+export const evidenceItems: EvidenceRecord[] = [
   {
-    source: "Project",
+    id: "shodan-automation",
+    kind: "project",
     title: "Shodan Automation",
     description:
       "Automated recurring external exposure reporting using Python and Azure DevOps.",
     skills: ["Python", "Azure DevOps", "Security Automation"],
-    date: "Jul 2026",
-    verified: true,
+    status: "verified",
+    source: {
+      label: "Project evidence",
+    },
+    occurredAt: "2026-07-01",
+    createdAt: "2026-09-29T00:00:00.000Z",
+    updatedAt: "2026-09-29T00:00:00.000Z",
   },
   {
-    source: "Project",
+    id: "wayne-enterprises-endpoint-diagnostic",
+    kind: "project",
     title: "Wayne Enterprises Endpoint Diagnostic",
     description:
       "Built a PowerShell diagnostic tool for Windows system health, networking, and security posture.",
     skills: ["PowerShell", "Windows", "Networking"],
-    date: "Sep 2026",
-    verified: true,
+    status: "verified",
+    source: {
+      label: "Project repository",
+    },
+    occurredAt: "2026-09-01",
+    createdAt: "2026-09-29T00:00:00.000Z",
+    updatedAt: "2026-09-29T00:00:00.000Z",
   },
   {
-    source: "Project",
+    id: "project-hallows",
+    kind: "project",
     title: "Project Hallows",
     description:
       "Designed a segmented cybersecurity homelab using OPNsense, VMware, Ubuntu, and firewall policy.",
     skills: ["Networking", "OPNsense", "Linux"],
-    date: "Sep 2026",
-    verified: true,
+    status: "verified",
+    source: {
+      label: "Homelab documentation",
+    },
+    occurredAt: "2026-09-01",
+    createdAt: "2026-09-29T00:00:00.000Z",
+    updatedAt: "2026-09-29T00:00:00.000Z",
   },
 ];
 
