@@ -24,7 +24,7 @@ class EvidenceSource(BaseModel):
     url: HttpUrl | None = None
 
 
-class EvidenceCreate(BaseModel):
+class EvidenceWrite(BaseModel):
     kind: EvidenceKind
     title: str = Field(min_length=3, max_length=160)
     description: str = Field(min_length=10, max_length=2000)
@@ -55,6 +55,14 @@ class EvidenceCreate(BaseModel):
             raise ValueError("At least one skill is required.")
 
         return normalized
+
+
+class EvidenceCreate(EvidenceWrite):
+    pass
+
+
+class EvidenceUpdate(EvidenceWrite):
+    pass
 
 
 class EvidenceRead(BaseModel):

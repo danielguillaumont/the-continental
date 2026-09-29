@@ -11,6 +11,7 @@ from app.schemas import (
     EvidenceCreate,
     EvidenceRead,
     EvidenceSource,
+    EvidenceUpdate,
     EvidenceValidationResponse,
 )
 
@@ -141,6 +142,47 @@ def get_evidence(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Evidence record not found.",
         )
+
+    return evidence_to_response(record)
+
+
+@app.put(
+    "/evidence/{evidence_id}",
+    response_model=EvidenceRead,
+    tags=["Evidence"],
+)
+def update_evidence(
+    evidence_id: UUID,
+    evidence: EvidenceUpdate,
+    session: Session = Depends(get_database_session),
+) -> EvidenceRead:
+    record = session.get(Evidence, evidence_id)
+
+    if record is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Evidence record not found.",
+        )
+
+    record.kind = evidence.kind
+    record.title = evidence.title
+    record.description = evidence.description
+    record.skills = evidence.skills
+    record.status = evidence.status
+    record.source_label = (
+        evidence.source.label
+        if evidence.source
+        else None
+    )
+    record.source_url = (
+        str(evidence.source.url)
+        if evidence.source and evidence.source.url
+        else None
+    )
+    record.occurred_at = evidence.occurredAt
+
+    session.commit()
+    session.refresh(record)
 
     return evidence_to_response(record)
 
