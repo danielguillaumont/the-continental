@@ -12,7 +12,7 @@ The Continental is a career intelligence platform that turns projects, experienc
 
 **v0.1 — My Evidence is in progress.**
 
-The Continental now has a working database-backed evidence system with creation, persistence, listing, inspection, and editing.
+The Continental now has a working database-backed evidence system with creation, persistence, listing, inspection, editing, and deletion.
 
 ### Working
 
@@ -22,6 +22,7 @@ The Continental now has a working database-backed evidence system with creation,
 - Add Evidence workflow
 - Evidence detail views
 - Edit Evidence workflow
+- Delete Evidence workflow with confirmation
 - FastAPI backend
 - PostgreSQL persistence
 - SQLAlchemy data model
@@ -33,7 +34,6 @@ The Continental now has a working database-backed evidence system with creation,
 
 ### Next
 
-- Delete evidence
 - Experience and project relationships
 - Skill relationships
 - Search and filtering
@@ -98,7 +98,7 @@ docker compose up -d postgres
 
 Start the API:
 
-```bash
+```powershell
 cd apps/api
 .\.venv\Scripts\Activate.ps1
 uvicorn app.main:app --reload --port 8000

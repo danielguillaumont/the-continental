@@ -1,6 +1,12 @@
 from uuid import UUID
 
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import (
+    Depends,
+    FastAPI,
+    HTTPException,
+    Response,
+    status,
+)
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -185,6 +191,31 @@ def update_evidence(
     session.refresh(record)
 
     return evidence_to_response(record)
+
+
+@app.delete(
+    "/evidence/{evidence_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    tags=["Evidence"],
+)
+def delete_evidence(
+    evidence_id: UUID,
+    session: Session = Depends(get_database_session),
+) -> Response:
+    record = session.get(Evidence, evidence_id)
+
+    if record is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Evidence record not found.",
+        )
+
+    session.delete(record)
+    session.commit()
+
+    return Response(
+        status_code=status.HTTP_204_NO_CONTENT,
+    )
 
 
 @app.get(
