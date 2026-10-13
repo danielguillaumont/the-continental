@@ -78,6 +78,21 @@ export async function updateEvidence(
   return response.json();
 }
 
+export async function deleteEvidence(
+  evidenceId: string,
+): Promise<void> {
+  const response = await fetch(
+    `${API_BASE_URL}/evidence/${evidenceId}`,
+    {
+      method: "DELETE",
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(await getErrorMessage(response));
+  }
+}
+
 export async function listEvidence(): Promise<EvidenceRecord[]> {
   const response = await fetch(`${API_BASE_URL}/evidence`);
 
