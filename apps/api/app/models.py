@@ -1,12 +1,65 @@
 from datetime import date, datetime
 from uuid import UUID, uuid4
 
-from sqlalchemy import Date, DateTime, String, Text, func
-from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy import (
+    Column,
+    Date,
+    DateTime,
+    ForeignKey,
+    String,
+    Table,
+    Text,
+    func,
+)
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
+
+
+evidence_skills = Table(
+    "evidence_skills",
+    Base.metadata,
+    Column(
+        "evidence_id",
+        PGUUID(as_uuid=True),
+        ForeignKey("evidence.id", ondelete="CASCADE"),
+        primary_key=True,
+    ),
+    Column(
+        "skill_id",
+        PGUUID(as_uuid=True),
+        ForeignKey("skills.id", ondelete="CASCADE"),
+        primary_key=True,
+    ),
+)
+
+
+class Skill(Base):
+    __tablename__ = "skills"
+
+    id: Mapped[UUID] = mapped_column(
+        PGUUID(as_uuid=True),
+        primary_key=True,
+        default=uuid4,
+    )
+
+    name: Mapped[str] = mapped_column(
+        String(120),
+        nullable=False,
+    )
+
+    normalized_name: Mapped[str] = mapped_column(
+        String(120),
+        nullable=False,
+        unique=True,
+        index=True,
+    )
+
+    evidence_items: Mapped[list["Evidence"]] = relationship(
+        secondary=evidence_skills,
+        back_populates="skills",
+    )
 
 
 class Evidence(Base):
@@ -33,9 +86,10 @@ class Evidence(Base):
         nullable=False,
     )
 
-    skills: Mapped[list[str]] = mapped_column(
-        ARRAY(String(120)),
-        nullable=False,
+    skills: Mapped[list[Skill]] = relationship(
+        secondary=evidence_skills,
+        back_populates="evidence_items",
+        lazy="selectin",
     )
 
     status: Mapped[str] = mapped_column(

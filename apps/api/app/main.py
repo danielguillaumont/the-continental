@@ -12,7 +12,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.database import get_database_session
-from app.models import Evidence
+from app.models import Evidence, Skill
 from app.schemas import (
     EvidenceCreate,
     EvidenceRead,
@@ -45,7 +45,56 @@ app.add_middleware(
 )
 
 
-def evidence_to_response(record: Evidence) -> EvidenceRead:
+def resolve_skills(
+    session: Session,
+    skill_names: list[str],
+) -> list[Skill]:
+    normalized_names = [
+        skill_name.strip().casefold()
+        for skill_name in skill_names
+    ]
+
+    statement = select(Skill).where(
+        Skill.normalized_name.in_(normalized_names)
+    )
+
+    existing_skills = session.scalars(statement).all()
+
+    skills_by_normalized_name = {
+        skill.normalized_name: skill
+        for skill in existing_skills
+    }
+
+    resolved_skills: list[Skill] = []
+
+    for skill_name in skill_names:
+        display_name = skill_name.strip()
+        normalized_name = display_name.casefold()
+
+        skill = skills_by_normalized_name.get(
+            normalized_name
+        )
+
+        if skill is None:
+            skill = Skill(
+                name=display_name,
+                normalized_name=normalized_name,
+            )
+
+            session.add(skill)
+
+            skills_by_normalized_name[
+                normalized_name
+            ] = skill
+
+        resolved_skills.append(skill)
+
+    return resolved_skills
+
+
+def evidence_to_response(
+    record: Evidence,
+) -> EvidenceRead:
     source: EvidenceSource | None = None
 
     if record.source_label is not None:
@@ -59,7 +108,10 @@ def evidence_to_response(record: Evidence) -> EvidenceRead:
         kind=record.kind,
         title=record.title,
         description=record.description,
-        skills=record.skills,
+        skills=[
+            skill.name
+            for skill in record.skills
+        ],
         status=record.status,
         source=source,
         occurredAt=record.occurred_at,
@@ -110,18 +162,30 @@ def validate_evidence(
 )
 def create_evidence(
     evidence: EvidenceCreate,
-    session: Session = Depends(get_database_session),
+    session: Session = Depends(
+        get_database_session
+    ),
 ) -> EvidenceRead:
     record = Evidence(
         kind=evidence.kind,
         title=evidence.title,
         description=evidence.description,
-        skills=evidence.skills,
+        skills=resolve_skills(
+            session,
+            evidence.skills,
+        ),
         status=evidence.status,
-        source_label=evidence.source.label if evidence.source else None,
-        source_url=str(evidence.source.url)
-        if evidence.source and evidence.source.url
-        else None,
+        source_label=(
+            evidence.source.label
+            if evidence.source
+            else None
+        ),
+        source_url=(
+            str(evidence.source.url)
+            if evidence.source
+            and evidence.source.url
+            else None
+        ),
         occurred_at=evidence.occurredAt,
     )
 
@@ -139,9 +203,14 @@ def create_evidence(
 )
 def get_evidence(
     evidence_id: UUID,
-    session: Session = Depends(get_database_session),
+    session: Session = Depends(
+        get_database_session
+    ),
 ) -> EvidenceRead:
-    record = session.get(Evidence, evidence_id)
+    record = session.get(
+        Evidence,
+        evidence_id,
+    )
 
     if record is None:
         raise HTTPException(
@@ -160,9 +229,14 @@ def get_evidence(
 def update_evidence(
     evidence_id: UUID,
     evidence: EvidenceUpdate,
-    session: Session = Depends(get_database_session),
+    session: Session = Depends(
+        get_database_session
+    ),
 ) -> EvidenceRead:
-    record = session.get(Evidence, evidence_id)
+    record = session.get(
+        Evidence,
+        evidence_id,
+    )
 
     if record is None:
         raise HTTPException(
@@ -173,7 +247,10 @@ def update_evidence(
     record.kind = evidence.kind
     record.title = evidence.title
     record.description = evidence.description
-    record.skills = evidence.skills
+    record.skills = resolve_skills(
+        session,
+        evidence.skills,
+    )
     record.status = evidence.status
     record.source_label = (
         evidence.source.label
@@ -182,7 +259,8 @@ def update_evidence(
     )
     record.source_url = (
         str(evidence.source.url)
-        if evidence.source and evidence.source.url
+        if evidence.source
+        and evidence.source.url
         else None
     )
     record.occurred_at = evidence.occurredAt
@@ -200,9 +278,14 @@ def update_evidence(
 )
 def delete_evidence(
     evidence_id: UUID,
-    session: Session = Depends(get_database_session),
+    session: Session = Depends(
+        get_database_session
+    ),
 ) -> Response:
-    record = session.get(Evidence, evidence_id)
+    record = session.get(
+        Evidence,
+        evidence_id,
+    )
 
     if record is None:
         raise HTTPException(
@@ -224,10 +307,17 @@ def delete_evidence(
     tags=["Evidence"],
 )
 def list_evidence(
-    session: Session = Depends(get_database_session),
+    session: Session = Depends(
+        get_database_session
+    ),
 ) -> list[EvidenceRead]:
-    statement = select(Evidence).order_by(Evidence.created_at.desc())
-    records = session.scalars(statement).all()
+    statement = select(Evidence).order_by(
+        Evidence.created_at.desc()
+    )
+
+    records = session.scalars(
+        statement
+    ).all()
 
     return [
         evidence_to_response(record)
