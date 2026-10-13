@@ -12,7 +12,7 @@ The Continental is a career intelligence platform that turns projects, experienc
 
 **v0.1 — My Evidence is in progress.**
 
-The Continental now has a working database-backed evidence system with creation, persistence, listing, inspection, editing, deletion, search, and filtering.
+The Continental now has a working database-backed evidence system with creation, persistence, listing, inspection, editing, deletion, search, filtering, and reusable skill relationships.
 
 ### Working
 
@@ -25,10 +25,13 @@ The Continental now has a working database-backed evidence system with creation,
 - Delete Evidence workflow with confirmation
 - Armory search and filtering
 - Live filtered result counts
+- Reusable skill entities
+- Many-to-many evidence and skill relationships
+- Case-insensitive skill reuse and normalization
 - FastAPI backend
 - PostgreSQL persistence
-- SQLAlchemy data model
-- Alembic migrations
+- SQLAlchemy relational data model
+- Alembic migrations with data-preserving skill normalization
 - Evidence validation with Pydantic
 - Database-backed evidence summaries and skill counts
 - Evidence provenance and record history
@@ -37,7 +40,6 @@ The Continental now has a working database-backed evidence system with creation,
 ### Next
 
 - Experience and project relationships
-- Skill relationships
 - Continue building the Armory
 
 ---
