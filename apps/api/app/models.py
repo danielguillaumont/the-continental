@@ -315,3 +315,32 @@ class Certification(Base):
         secondary=certification_evidence, back_populates="certifications",
         lazy="selectin", order_by="Evidence.created_at",
     )
+
+
+class Profile(Base):
+    """Single-user career identity; intentionally independent of career proof."""
+
+    __tablename__ = "profiles"
+    __table_args__ = (
+        CheckConstraint("id = 1", name="ck_profiles_singleton"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, default=1)
+    full_name: Mapped[str] = mapped_column(String(160), nullable=False)
+    headline: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    professional_summary: Mapped[str | None] = mapped_column(Text, nullable=True)
+    location: Mapped[str | None] = mapped_column(String(160), nullable=True)
+    email: Mapped[str | None] = mapped_column(String(254), nullable=True)
+    phone: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    website_url: Mapped[str | None] = mapped_column(Text, nullable=True)
+    github_url: Mapped[str | None] = mapped_column(Text, nullable=True)
+    linkedin_url: Mapped[str | None] = mapped_column(Text, nullable=True)
+    target_roles: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    available_from: Mapped[date | None] = mapped_column(Date, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False,
+        server_default=func.now(), onupdate=func.now()
+    )
