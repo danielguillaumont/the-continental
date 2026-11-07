@@ -43,7 +43,7 @@ export function RecentEvidence() {
             Recent evidence
           </h2>
           <p className="mt-1 text-[12px] text-text-muted">
-            Saved records from your Armory, not example data.
+            Real records from your Evidence library, not demo examples.
           </p>
         </div>
         <Link href="/armory" className="text-[12px] font-semibold text-gold hover:text-gold-hover">

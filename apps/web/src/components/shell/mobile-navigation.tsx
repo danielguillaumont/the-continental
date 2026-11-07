@@ -50,7 +50,7 @@ export function MobileNavigation({
         <div className="border-t border-border-subtle px-5 py-4">
           <div className="flex items-center gap-2 text-[11px] text-text-muted">
             <span className="size-1.5 rounded-full bg-success" />
-            <span>v0.1 · Evidence</span>
+            <span>v0.1 · Evidence foundation</span>
           </div>
         </div>
       </aside>

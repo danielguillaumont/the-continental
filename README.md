@@ -16,9 +16,9 @@ The Continental now has a working database-backed evidence system and a project 
 
 ### Working
 
-- Responsive Next.js application shell
-- Lobby dashboard
-- Armory evidence library
+- Responsive Next.js application shell with distinct Overview, Projects and Evidence navigation
+- Overview dashboard (formerly Lobby)
+- Evidence library (existing Armory URLs preserved)
 - Add Evidence workflow
 - Evidence detail views
 - Edit Evidence workflow
@@ -43,6 +43,7 @@ The Continental now has a working database-backed evidence system and a project 
 
 ### Next
 
+- Complete UX Foundation visual/mobile QA and follow-up workflow refinements
 - Experience and certification entities and relationships
 - Profile/skill evidence inspection and remaining v0.1 release validation
 - Screenshot review with sanitized demonstration data
@@ -70,8 +71,9 @@ Future AI features will operate on this evidence instead of inventing it.
 
 | Area | Purpose |
 | --- | --- |
-| **Lobby** | Home workspace and current priorities |
-| **Armory** | Career evidence, projects, experience, and skills |
+| **Overview** | Home workspace and next actions |
+| **Projects** | Project records grouped with supporting evidence |
+| **Evidence** | Reusable records supporting projects, skills and experience |
 | **Dossier** | Opportunity analysis |
 | **Contracts** | Bounded missions for closing evidence gaps |
 | **Archive** | Applications, interviews, and outcomes |
@@ -137,7 +139,7 @@ http://127.0.0.1:8000/docs
 
 Run the API tests from `apps/api` with `python -m pytest tests/test_projects.py -q`, and web checks from `apps/web` with `npm run lint` and `npm run build`.
 
-In the Armory, select **Browse projects** to create project records and attach existing evidence. Unlinking or deleting a project preserves the underlying evidence. This is still a single-user development application; user authentication and tenant separation are not yet implemented.
+Choose **Projects** in the main navigation to create project records and link evidence from **Evidence**. Routes `/armory` and `/armory/projects` remain unchanged for compatibility. Unlinking or deleting a project preserves the underlying evidence. This is still a single-user development application; user authentication and tenant separation are not yet implemented.
 
 ---
 

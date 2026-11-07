@@ -6,7 +6,7 @@ import { AppShell } from "@/components/shell/app-shell";
 
 export default function NewEvidencePage() {
   return (
-    <AppShell sectionLabel="Armory">
+    <AppShell sectionLabel="Evidence">
       <div className="mx-auto w-full max-w-[1100px] px-4 py-7 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
         <div className="border-b border-border-subtle pb-7">
           <Link
@@ -18,11 +18,11 @@ export default function NewEvidencePage() {
               className="size-4"
               strokeWidth={1.8}
             />
-            Back to Armory
+            Back to Evidence
           </Link>
 
           <p className="mt-6 text-[11px] font-semibold uppercase tracking-[0.15em] text-gold">
-            Armory / New Evidence
+            Evidence / New Evidence
           </p>
 
           <h1 className="mt-2 text-[22px] font-semibold tracking-[-0.02em] text-text-primary sm:text-[24px]">

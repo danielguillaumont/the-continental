@@ -95,24 +95,33 @@ export default function ProjectsPage() {
       if (detach) await detachProjectEvidence(projectId, evidenceId);
       else await attachProjectEvidence(projectId, evidenceId);
       setSelection((old) => ({ ...old, [projectId]: "" }));
-      setNotice(detach ? "Link removed; evidence stays in the Armory." : "Evidence linked to the project.");
+      setNotice(detach ? "Link removed; evidence remains in your Evidence library." : "Evidence linked to the project.");
       await load();
     } catch (cause) { setError(describe(cause)); }
     finally { setBusyId(null); }
   }
 
   return (
-    <AppShell sectionLabel="Armory · Projects">
+    <AppShell sectionLabel="Projects">
       <div className="mx-auto w-full max-w-[1120px] px-4 py-7 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
-        <Link href="/armory" className="inline-flex items-center gap-2 text-[12px] text-text-secondary hover:text-text-primary"><ArrowLeft aria-hidden="true" className="size-4" />Back to Armory</Link>
+        <Link href="/armory" className="inline-flex items-center gap-2 text-[12px] text-text-secondary hover:text-text-primary"><ArrowLeft aria-hidden="true" className="size-4" />Browse evidence instead</Link>
         <header className="mt-6 flex flex-wrap items-end justify-between gap-4 border-b border-border-subtle pb-6">
           <div className="max-w-2xl">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-gold">Armory / Project registry</p>
-            <h1 className="mt-2 text-[24px] font-semibold tracking-tight text-text-primary">Projects with proof.</h1>
-            <p className="mt-2 text-[13px] leading-6 text-text-secondary">Build a durable project record, then link the evidence that supports it. A project can have many artifacts; evidence stays independent.</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-gold">PROJECT WORKSPACE</p>
+            <h1 className="mt-2 text-[24px] font-semibold tracking-tight text-text-primary">Projects you can stand behind.</h1>
+            <p className="mt-2 text-[13px] leading-6 text-text-secondary">Create a project for the work you built, then attach reusable proof from your Evidence library. One project can be backed by many records.</p>
           </div>
           <button type="button" onClick={newProject} className="inline-flex h-10 items-center gap-2 rounded-md bg-gold px-4 text-[13px] font-semibold text-text-inverse hover:bg-gold-hover focus-visible:outline-2 focus-visible:outline-gold"><Plus className="size-4" aria-hidden="true"/>New project</button>
         </header>
+
+        <section aria-label="How projects work" className="mt-5 rounded-lg border border-border bg-surface px-4 py-4 sm:px-5">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-gold">How it works</p>
+          <ol className="mt-3 grid gap-3 text-[12px] leading-5 text-text-secondary sm:grid-cols-3">
+            <li><span className="mr-2 font-technical text-gold">01</span><strong className="text-text-primary">Create a project</strong><span className="mt-1 block">Describe the actual work and its status.</span></li>
+            <li><span className="mr-2 font-technical text-gold">02</span><strong className="text-text-primary">Gather evidence</strong><span className="mt-1 block">Use saved records or create new proof in the Evidence library.</span></li>
+            <li><span className="mr-2 font-technical text-gold">03</span><strong className="text-text-primary">Link the proof</strong><span className="mt-1 block">Choose an evidence record under your project, then select Attach evidence.</span></li>
+          </ol>
+        </section>
 
         {error && <div role="alert" className="mt-5 flex items-start gap-2 rounded-lg border border-danger-border bg-danger-surface p-4 text-[13px] text-danger-text"><AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />{error}</div>}
         {notice && <div role="status" className="mt-5 rounded-lg border border-success-border bg-success-surface p-4 text-[13px] text-success-text">{notice}</div>}
@@ -132,7 +141,7 @@ export default function ProjectsPage() {
 
         <section aria-labelledby="registry-title" className="mt-7">
           <div className="mb-4 flex items-center justify-between gap-3"><div><h2 id="registry-title" className="text-[15px] font-semibold text-text-primary">Project registry</h2><p className="mt-1 text-[12px] text-text-muted">{loading ? "Loading…" : `${projects.length} projects · ${evidence.length} evidence records available`}</p></div><button type="button" disabled={loading} onClick={() => void load()} className={smallButton}><RefreshCw aria-hidden="true" className="size-4"/>Refresh</button></div>
-          {loading ? <div role="status" className="rounded-lg border border-border bg-surface p-6 text-[13px] text-text-muted">Loading projects…</div> : error && projects.length === 0 ? <div className="rounded-lg border border-danger-border bg-danger-surface p-6 text-[13px] text-danger-text">Cannot load the registry. Check the API and retry.</div> : projects.length === 0 ? <div className="rounded-lg border border-border bg-surface p-8 text-center"><FolderKanban aria-hidden="true" className="mx-auto size-7 text-gold"/><h3 className="mt-3 text-[15px] font-semibold text-text-primary">No projects yet</h3><p className="mx-auto mt-2 max-w-md text-[13px] leading-6 text-text-secondary">Create your first project, then link supporting evidence from the Armory.</p><button onClick={newProject} type="button" className="mt-4 text-[13px] font-semibold text-gold hover:text-gold-hover">Create your first project</button></div> :
+          {loading ? <div role="status" className="rounded-lg border border-border bg-surface p-6 text-[13px] text-text-muted">Loading projects…</div> : error && projects.length === 0 ? <div className="rounded-lg border border-danger-border bg-danger-surface p-6 text-[13px] text-danger-text">Cannot load the registry. Check the API and retry.</div> : projects.length === 0 ? <div className="rounded-lg border border-border bg-surface p-8 text-center"><FolderKanban aria-hidden="true" className="mx-auto size-7 text-gold"/><h3 className="mt-3 text-[15px] font-semibold text-text-primary">No projects yet</h3><p className="mx-auto mt-2 max-w-md text-[13px] leading-6 text-text-secondary">Create your first project, then link proof from the Evidence library.</p><button onClick={newProject} type="button" className="mt-4 text-[13px] font-semibold text-gold hover:text-gold-hover">Create your first project</button></div> :
             <div className="grid gap-4">{projects.map((project) => {
               const linked = new Set(project.evidence.map((item) => item.id));
               const available = evidence.filter((item) => !linked.has(item.id));
@@ -142,7 +151,7 @@ export default function ProjectsPage() {
                 {deletingId === project.id && <div className="mt-4 rounded-md border border-danger-border bg-danger-surface p-4 text-[12px] text-text-secondary"><p className="font-semibold text-danger-text">Delete {project.name}?</p><p className="mt-1">This removes only the project and its links. Evidence remains saved.</p><div className="mt-3 flex flex-wrap gap-2"><button type="button" disabled={busy} onClick={() => void remove(project)} className="rounded-md bg-danger px-3 py-2 font-semibold text-white disabled:opacity-50">{busy ? "Deleting…" : "Confirm delete"}</button><button type="button" disabled={busy} onClick={() => setDeletingId(null)} className={smallButton}>Cancel</button></div></div>}
                 <div className="mt-5 border-t border-border-subtle pt-4"><div className="flex items-center justify-between gap-2"><h4 className="text-[12px] font-semibold text-text-primary">Supporting evidence</h4><span className="text-[11px] text-text-muted">{project.evidence.length} linked</span></div>
                   {project.evidence.length === 0 ? <p className="mt-3 text-[12px] text-text-muted">No evidence yet. A project name is not proof on its own.</p> : <ul className="mt-3 space-y-2">{project.evidence.map((item) => <li key={item.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border-subtle bg-surface-raised px-3 py-2"><Link href={`/armory/${item.id}`} className="min-w-0 break-words text-[12px] font-medium text-text-primary hover:text-gold">{item.title}<span className="ml-1 text-[11px] font-normal text-text-muted">· {item.kind} · {item.status}</span></Link><button type="button" disabled={busy} onClick={() => void setLink(project.id, item.id, true)} aria-label={`Detach ${item.title} from ${project.name}`} className="text-[11px] font-semibold text-text-muted hover:text-danger-text disabled:opacity-50">Detach</button></li>)}</ul>}
-                  <div className="mt-4 flex flex-wrap items-end gap-3"><label className="min-w-[180px] flex-1 text-[11px] font-semibold uppercase tracking-wide text-text-muted">Attach existing evidence<select className={field} disabled={busy || !available.length} value={selection[project.id] ?? ""} onChange={(event) => setSelection((previous) => ({ ...previous, [project.id]: event.target.value }))}><option value="">{available.length ? "Choose evidence…" : "No unlinked evidence"}</option>{available.map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}</select></label><button type="button" disabled={busy || !selection[project.id]} onClick={() => void setLink(project.id, selection[project.id], false)} className={smallButton}><Link2 aria-hidden="true" className="size-3.5"/>Link</button><Link href="/armory/new" className="text-[12px] font-semibold text-gold hover:text-gold-hover">Create evidence</Link></div>
+                  <div className="mt-4 flex flex-wrap items-end gap-3"><label className="min-w-0 basis-full flex-1 text-[11px] sm:basis-auto font-semibold uppercase tracking-wide text-text-muted">Attach existing evidence<select className={field} disabled={busy || !available.length} value={selection[project.id] ?? ""} onChange={(event) => setSelection((previous) => ({ ...previous, [project.id]: event.target.value }))}><option value="">{available.length ? "Choose evidence…" : "No unlinked evidence"}</option>{available.map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}</select></label><button type="button" disabled={busy || !selection[project.id]} onClick={() => void setLink(project.id, selection[project.id], false)} className={smallButton}><Link2 aria-hidden="true" className="size-3.5"/>Attach evidence</button><Link href="/armory/new" className="text-[12px] font-semibold text-gold hover:text-gold-hover">Add new evidence</Link></div>
                 </div>
               </article>;
             })}</div>}

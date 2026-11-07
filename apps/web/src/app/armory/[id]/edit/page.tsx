@@ -57,7 +57,7 @@ export default function EditEvidencePage() {
   }, [evidenceId]);
 
   return (
-    <AppShell sectionLabel="Armory">
+    <AppShell sectionLabel="Evidence">
       <div className="mx-auto w-full max-w-[920px] px-4 py-7 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
         <Link
           href={`/armory/${evidenceId}`}
@@ -73,7 +73,7 @@ export default function EditEvidencePage() {
 
         <header className="mt-7 border-b border-border-subtle pb-7">
           <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-gold">
-            Armory / Edit Evidence
+            Evidence / Edit Evidence
           </p>
 
           <h1 className="mt-2 text-[24px] font-semibold tracking-[-0.02em] text-text-primary">
