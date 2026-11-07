@@ -41,9 +41,17 @@ Evidence records can be reused across projects, experiences, certifications and 
 
 ## Current Status
 
-**v0.1.0 — My Evidence (release candidate; not tagged yet).**
 
-The first career-record foundation is implemented: Profile, Experience, Projects, Evidence, Skills, and Certifications are backed by persistent models and working UI. Records can be linked without duplicating the originals. The next milestone is v0.2 â€” Dossier, starting with structured job opportunity records. This repository is still a local-only development application, not a hosted service.
+## Current Status
+
+**v0.1.0 - Career Record Foundation (released November 7, 2026).**
+
+The first career-record foundation is implemented: Profile, Experience, Projects, Evidence, Skills, and Certifications are backed by persistent models and working UI. Records can be linked without duplicating the originals.
+
+The next milestone is v0.2 - Dossier, starting with structured job opportunity records.
+
+This repository is still a local-only development application, not a hosted service.
+
 
 ### Working
 
