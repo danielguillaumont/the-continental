@@ -2,8 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { activeDestination, destinations } from "../src/lib/primary-navigation.ts";
 
-test("only three working product destinations are exposed", () => {
-  assert.deepEqual(Object.keys(destinations), ["overview", "projects", "evidence"]);
+test("only four implemented product destinations are exposed", () => {
+  assert.deepEqual(Object.keys(destinations), ["overview", "projects", "experiences", "evidence"]);
 });
 
 test("project routes do not activate the evidence destination", () => {
@@ -20,4 +20,13 @@ test("legacy evidence, create, view and edit routes stay under Evidence", () => 
 test("Overview activates only at root", () => {
   assert.equal(activeDestination("/"), "overview");
   assert.equal(activeDestination("/unimplemented"), null);
+});
+
+
+test("experience index and details activate only Experience", () => {
+  for (const path of ["/experiences", "/experiences/", "/experiences/1234"]) {
+    assert.equal(activeDestination(path), "experiences");
+  }
+  assert.equal(activeDestination("/armory/projects/a"), "projects");
+  assert.equal(activeDestination("/armory/new"), "evidence");
 });

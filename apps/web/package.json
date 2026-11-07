@@ -9,7 +9,8 @@
     "lint": "eslint",
     "test:navigation": "node --experimental-strip-types --test tests/primary-navigation.test.mjs",
     "test:projects": "node --experimental-strip-types --test tests/project-workspace.test.mjs",
-    "test:workflow": "node --experimental-strip-types --test tests/project-evidence-flow.test.mjs"
+    "test:workflow": "node --experimental-strip-types --test tests/project-evidence-flow.test.mjs",
+    "test:experiences": "node --experimental-strip-types --test tests/experience-workspace.test.mjs"
   },
   "dependencies": {
     "@fontsource-variable/geist": "5.3.0",

@@ -12,11 +12,11 @@ The Continental is a career intelligence platform that turns projects, experienc
 
 **v0.1 — My Evidence is in progress.**
 
-The Continental now has a working database-backed evidence system and a project registry that groups supporting evidence without duplicating it. v0.1 is still in progress; profile and certification domain records are not yet complete; Experience API/storage is underway and its UI is not yet implemented.
+The Continental now has database-backed Projects, Evidence, and Experience workspaces, with reusable proof connected across records. v0.1 remains in progress: profile, certification management, and final skill-proof inspection are not yet complete.
 
 ### Working
 
-- Responsive Next.js application shell with distinct Overview, Projects and Evidence navigation
+- Responsive Next.js application shell with distinct Overview, Experience, Projects and Evidence navigation
 - Overview dashboard (formerly Lobby)
 - Evidence library (existing Armory URLs preserved)
 - Add Evidence workflow
@@ -41,11 +41,11 @@ The Continental now has a working database-backed evidence system and a project 
 - Project-aware evidence creation: save, auto-attach and return to the project; attachment failures preserve the new evidence ID for safe retry
 - Project/evidence relational tables with additive Alembic migration
 - API integration tests for project lifecycle and relationship integrity
-- Structured Experience API foundation (work roles, dates, accomplishments, project/evidence links) and additive migration; no Experience screens yet
+- Structured Experience API, PostgreSQL model, additive migration, and responsive Experience workspace (list, create, edit, detail, delete, project/evidence associations)
 
 ### Next
 
-- Experience Registry UI, then certification entities and relationships
+- Experience Registry workflow hardening, then certification entities and relationships
 - Profile/skill evidence inspection and remaining v0.1 release validation
 - Screenshot review with sanitized demonstration data
 
@@ -73,6 +73,7 @@ Future AI features will operate on this evidence instead of inventing it.
 | Area | Purpose |
 | --- | --- |
 | **Overview** | Home workspace and next actions |
+| **Experience** | Roles, organizations, accomplishments, and supporting work |
 | **Projects** | Project records grouped with supporting evidence |
 | **Evidence** | Reusable records supporting projects, skills and experience |
 | **Dossier** | Opportunity analysis |
@@ -138,9 +139,9 @@ API docs:
 http://127.0.0.1:8000/docs
 ```
 
-Run the API tests from `apps/api` with `python -m pytest tests/test_projects.py -q`, and web checks from `apps/web` with `npm run test:navigation`, `npm run test:projects`, `npm run lint` and `npm run build`.
+Run API tests from `apps/api` with `python -m pytest tests/test_projects.py tests/test_experiences.py -q`. From `apps/web`, run `npm run test:navigation`, `npm run test:projects`, `npm run test:workflow`, `npm run test:experiences`, `npm run lint` and `npm run build`.
 
-Choose **Projects** in the main navigation to create project records, then open a project to view its dedicated workspace, edit details, and link saved proof from **Evidence**. Routes `/armory` and `/armory/projects` remain unchanged for compatibility; project details use `/armory/projects/[id]`. Unlinking or deleting a project preserves underlying evidence. Creating new evidence from within a project does not yet automatically attach it; the return-and-link workflow is planned for UX Foundation 3B2. This is still a single-user development application; user authentication and tenant separation are not yet implemented.
+Choose **Projects** in the main navigation to create project records, then open a project to view its dedicated workspace, edit details, and link saved proof from **Evidence**. Routes `/armory` and `/armory/projects` remain unchanged for compatibility; project details use `/armory/projects/[id]`. Unlinking or deleting a project preserves underlying evidence. Creating new evidence from within a project automatically attaches it and returns to the project; a failed attachment can be retried without duplicating evidence. Use **Experience** (`/experiences`) to create role records and link existing Projects or Evidence without transferring ownership. This is still a single-user development application; user authentication and tenant separation are not yet implemented.
 
 ---
 

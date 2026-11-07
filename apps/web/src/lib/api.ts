@@ -1,3 +1,4 @@
+import type { ExperienceRecord, ExperienceWritePayload } from "@/types/experience";
 import type { ProjectRecord, ProjectWritePayload } from "@/types/project";
 import type {
   EvidenceKind,
@@ -166,4 +167,53 @@ export async function detachProjectEvidence(projectId: string, evidenceId: strin
     `${API_BASE_URL}/projects/${projectId}/evidence/${evidenceId}`,
     { method: "DELETE" },
   ));
+}
+
+// Experience Registry: these relationships never transfer ownership of projects or evidence.
+async function readExperienceResponse(response: Response): Promise<ExperienceRecord> {
+  if (!response.ok) throw new Error(await getErrorMessage(response));
+  return response.json();
+}
+
+export async function listExperiences(): Promise<ExperienceRecord[]> {
+  const response = await fetch(`${API_BASE_URL}/experiences`);
+  if (!response.ok) throw new Error(await getErrorMessage(response));
+  return response.json();
+}
+
+export async function getExperience(id: string): Promise<ExperienceRecord> {
+  return readExperienceResponse(await fetch(`${API_BASE_URL}/experiences/${encodeURIComponent(id)}`));
+}
+
+export async function createExperience(payload: ExperienceWritePayload): Promise<ExperienceRecord> {
+  return readExperienceResponse(await fetch(`${API_BASE_URL}/experiences`, {
+    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
+  }));
+}
+
+export async function updateExperience(id: string, payload: ExperienceWritePayload): Promise<ExperienceRecord> {
+  return readExperienceResponse(await fetch(`${API_BASE_URL}/experiences/${encodeURIComponent(id)}`, {
+    method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
+  }));
+}
+
+export async function deleteExperience(id: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/experiences/${encodeURIComponent(id)}`, { method: "DELETE" });
+  if (!response.ok) throw new Error(await getErrorMessage(response));
+}
+
+export async function attachExperienceProject(id: string, projectId: string): Promise<ExperienceRecord> {
+  return readExperienceResponse(await fetch(`${API_BASE_URL}/experiences/${encodeURIComponent(id)}/projects/${encodeURIComponent(projectId)}`, { method: "POST" }));
+}
+
+export async function detachExperienceProject(id: string, projectId: string): Promise<ExperienceRecord> {
+  return readExperienceResponse(await fetch(`${API_BASE_URL}/experiences/${encodeURIComponent(id)}/projects/${encodeURIComponent(projectId)}`, { method: "DELETE" }));
+}
+
+export async function attachExperienceEvidence(id: string, evidenceId: string): Promise<ExperienceRecord> {
+  return readExperienceResponse(await fetch(`${API_BASE_URL}/experiences/${encodeURIComponent(id)}/evidence/${encodeURIComponent(evidenceId)}`, { method: "POST" }));
+}
+
+export async function detachExperienceEvidence(id: string, evidenceId: string): Promise<ExperienceRecord> {
+  return readExperienceResponse(await fetch(`${API_BASE_URL}/experiences/${encodeURIComponent(id)}/evidence/${encodeURIComponent(evidenceId)}`, { method: "DELETE" }));
 }
