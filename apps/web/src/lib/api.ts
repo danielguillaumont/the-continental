@@ -1,3 +1,4 @@
+import type { SkillDetail, SkillSummary } from "@/types/skill";
 import type { ExperienceRecord, ExperienceWritePayload } from "@/types/experience";
 import type { ProjectRecord, ProjectWritePayload } from "@/types/project";
 import type {
@@ -216,4 +217,18 @@ export async function attachExperienceEvidence(id: string, evidenceId: string): 
 
 export async function detachExperienceEvidence(id: string, evidenceId: string): Promise<ExperienceRecord> {
   return readExperienceResponse(await fetch(`${API_BASE_URL}/experiences/${encodeURIComponent(id)}/evidence/${encodeURIComponent(evidenceId)}`, { method: "DELETE" }));
+}
+
+
+// Read-only Skill & Proof endpoints. Skill edits occur through saved Evidence.
+export async function listSkills(): Promise<SkillSummary[]> {
+  const response = await fetch(`${API_BASE_URL}/skills`, { cache: "no-store" });
+  if (!response.ok) throw new Error(await getErrorMessage(response));
+  return response.json();
+}
+
+export async function getSkill(id: string): Promise<SkillDetail> {
+  const response = await fetch(`${API_BASE_URL}/skills/${encodeURIComponent(id)}`, { cache: "no-store" });
+  if (!response.ok) throw new Error(await getErrorMessage(response));
+  return response.json();
 }

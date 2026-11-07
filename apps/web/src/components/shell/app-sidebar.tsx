@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BriefcaseBusiness, FolderKanban, LayoutDashboard, LibraryBig, type LucideIcon } from "lucide-react";
+import { BriefcaseBusiness, FolderKanban, LayoutDashboard, LibraryBig, Tags, type LucideIcon } from "lucide-react";
 
 import { BrandMark } from "@/components/shell/brand-mark";
 import { activeDestination, destinations, type Destination } from "@/lib/primary-navigation";
@@ -45,7 +45,7 @@ export function SidebarNavigation({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   const active = activeDestination(pathname);
   return (
-    <nav aria-label="Primary navigation" className="flex flex-1 flex-col px-3 py-5">
+    <nav aria-label="Primary navigation" className="flex min-h-0 flex-1 flex-col overflow-y-auto px-3 py-5">
       <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-text-muted">Workspace</p>
       <SidebarItem icon={LayoutDashboard} destination="overview" active={active === "overview"} onSelect={onNavigate} />
       <p className="mb-2 mt-6 px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-text-muted">Your career record</p>
@@ -53,9 +53,10 @@ export function SidebarNavigation({ onNavigate }: { onNavigate?: () => void }) {
         <SidebarItem icon={BriefcaseBusiness} destination="experiences" active={active === "experiences"} onSelect={onNavigate} />
         <SidebarItem icon={FolderKanban} destination="projects" active={active === "projects"} onSelect={onNavigate} />
         <SidebarItem icon={LibraryBig} destination="evidence" active={active === "evidence"} onSelect={onNavigate} />
+        <SidebarItem icon={Tags} destination="skills" active={active === "skills"} onSelect={onNavigate} />
       </div>
       <p className="mt-5 border-t border-border-subtle px-3 pt-4 text-[11px] leading-5 text-text-muted">
-        Experience tracks the roles. Projects show what you built. Evidence is the reusable proof.
+        Roles and projects describe your work. Evidence backs your skills with inspectable proof.
       </p>
     </nav>
   );

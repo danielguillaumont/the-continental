@@ -2,6 +2,8 @@
 
 ## Unreleased — v0.1 My Evidence
 
+- Added Skills & Proof Slice 1A: read-only FastAPI skill inventory/detail endpoints based on existing normalized evidence relationships, a searchable/filterable Skills workspace and proof drill-down, status-aware summaries, navigation, and regression tests. No schema migration, new dependencies, or fabricated skill scores.
+
 - Added Experience Registry Slice 1B: dedicated Experience navigation, responsive list/detail and create/edit forms, accomplishments, project/evidence linking, deletion safeguards, and frontend regression checks. No backend or schema changes.
 
 - Added Experience Registry backend foundation: dated roles, employer details, highlights, independent project/evidence links, API CRUD, migration and disposable integration tests. Experience frontend is a subsequent slice.
