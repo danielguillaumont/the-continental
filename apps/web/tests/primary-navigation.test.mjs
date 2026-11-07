@@ -2,8 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { activeDestination, destinations } from "../src/lib/primary-navigation.ts";
 
-test("only four implemented product destinations are exposed", () => {
-  assert.deepEqual(Object.keys(destinations), ["overview", "projects", "experiences", "evidence"]);
+test("only five implemented product destinations are exposed", () => {
+  assert.deepEqual(Object.keys(destinations), ["overview", "projects", "experiences", "evidence", "skills"]);
 });
 
 test("project routes do not activate the evidence destination", () => {
@@ -28,5 +28,13 @@ test("experience index and details activate only Experience", () => {
     assert.equal(activeDestination(path), "experiences");
   }
   assert.equal(activeDestination("/armory/projects/a"), "projects");
+  assert.equal(activeDestination("/armory/new"), "evidence");
+});
+
+
+test("Skills index and detail activate only Skills", () => {
+  assert.equal(activeDestination("/skills"), "skills");
+  assert.equal(activeDestination("/skills/"), "skills");
+  assert.equal(activeDestination("/skills/skill-uuid"), "skills");
   assert.equal(activeDestination("/armory/new"), "evidence");
 });

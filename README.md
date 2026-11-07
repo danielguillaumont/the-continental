@@ -12,11 +12,11 @@ The Continental is a career intelligence platform that turns projects, experienc
 
 **v0.1 — My Evidence is in progress.**
 
-The Continental now has database-backed Projects, Evidence, and Experience workspaces, with reusable proof connected across records. v0.1 remains in progress: profile, certification management, and final skill-proof inspection are not yet complete.
+The Continental now has database-backed Projects, Evidence, and Experience workspaces, with reusable proof connected across records. v0.1 remains in progress: profile and dedicated certification management are not yet complete; Skills & Proof inspection is now included.
 
 ### Working
 
-- Responsive Next.js application shell with distinct Overview, Experience, Projects and Evidence navigation
+- Responsive Next.js application shell with distinct Overview, Experience, Projects, Evidence, and Skills navigation
 - Overview dashboard (formerly Lobby)
 - Evidence library (existing Armory URLs preserved)
 - Add Evidence workflow
@@ -28,6 +28,8 @@ The Continental now has database-backed Projects, Evidence, and Experience works
 - Reusable skill entities
 - Many-to-many evidence and skill relationships
 - Case-insensitive skill reuse and normalization
+- Skills & Proof inventory: searchable skill names, evidence coverage filters, record counts, and drill-down with provenance (read-only; no invented proficiency scores)
+- Skill coverage derived from saved evidence status, including unsupported skills whose last evidence was removed
 - FastAPI backend
 - PostgreSQL persistence
 - SQLAlchemy relational data model
@@ -45,8 +47,8 @@ The Continental now has database-backed Projects, Evidence, and Experience works
 
 ### Next
 
-- Experience Registry workflow hardening, then certification entities and relationships
-- Profile/skill evidence inspection and remaining v0.1 release validation
+- Dedicated certification records, verification and expiration data
+- Profile management and remaining v0.1 release validation
 - Screenshot review with sanitized demonstration data
 
 ---
@@ -76,6 +78,7 @@ Future AI features will operate on this evidence instead of inventing it.
 | **Experience** | Roles, organizations, accomplishments, and supporting work |
 | **Projects** | Project records grouped with supporting evidence |
 | **Evidence** | Reusable records supporting projects, skills and experience |
+| **Skills** | Inspect a skill and the exact evidence records that support it |
 | **Dossier** | Opportunity analysis |
 | **Contracts** | Bounded missions for closing evidence gaps |
 | **Archive** | Applications, interviews, and outcomes |
@@ -139,9 +142,9 @@ API docs:
 http://127.0.0.1:8000/docs
 ```
 
-Run API tests from `apps/api` with `python -m pytest tests/test_projects.py tests/test_experiences.py -q`. From `apps/web`, run `npm run test:navigation`, `npm run test:projects`, `npm run test:workflow`, `npm run test:experiences`, `npm run lint` and `npm run build`.
+Run API tests from `apps/api` with `python -m pytest tests/test_projects.py tests/test_experiences.py tests/test_skills.py -q`. From `apps/web`, run `npm run test:navigation`, `npm run test:projects`, `npm run test:workflow`, `npm run test:experiences`, `npm run test:skills`, `npm run lint` and `npm run build`.
 
-Choose **Projects** in the main navigation to create project records, then open a project to view its dedicated workspace, edit details, and link saved proof from **Evidence**. Routes `/armory` and `/armory/projects` remain unchanged for compatibility; project details use `/armory/projects/[id]`. Unlinking or deleting a project preserves underlying evidence. Creating new evidence from within a project automatically attaches it and returns to the project; a failed attachment can be retried without duplicating evidence. Use **Experience** (`/experiences`) to create role records and link existing Projects or Evidence without transferring ownership. This is still a single-user development application; user authentication and tenant separation are not yet implemented.
+Choose **Projects** in the main navigation to create project records, then open a project to view its dedicated workspace, edit details, and link saved proof from **Evidence**. Routes `/armory` and `/armory/projects` remain unchanged for compatibility; project details use `/armory/projects/[id]`. Unlinking or deleting a project preserves underlying evidence. Creating new evidence from within a project automatically attaches it and returns to the project; a failed attachment can be retried without duplicating evidence. Use **Experience** (`/experiences`) to create role records and link existing Projects or Evidence without transferring ownership. Use **Skills** (`/skills`) to inspect evidence-derived skill coverage, then open an individual skill to see the original records and their source information. Skill records are not edited independently; evidence tags control relationships. A "verified" tag is owner-provided, not third-party certification. This is still a single-user development application; user authentication and tenant separation are not yet implemented.
 
 ---
 
