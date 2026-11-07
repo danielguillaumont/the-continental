@@ -2,6 +2,8 @@
 
 ## Unreleased — v0.1 My Evidence
 
+- Added Profile Management Slice 1A (backend only): singleton career profile, validated identity/contact/summary/role targets, additive PostgreSQL migration, and disposable regression tests. No frontend destination, new dependencies, authentication or data seeding. Personal data must remain local until authentication exists.
+
 - Added Certifications Registry Slice 1B: standalone responsive credential inventory/details, create/edit/delete workflows, calendar-based expiry status, Skill/Evidence linking, navigation, and frontend regression checks. No schema or backend changes; credential data and URLs remain owner-entered.
 
 - Added Certification Registry Slice 1A (backend only): standalone credential records, issuer and optional date/URL fields, data-preserving Alembic migration, independent links to existing Skills and Evidence, and disposable API/migration regression tests. No new dependencies or frontend destination. Credential URLs are owner-supplied; issuer verification is not automated.

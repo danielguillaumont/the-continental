@@ -12,7 +12,7 @@ The Continental is a career intelligence platform that turns projects, experienc
 
 **v0.1 — My Evidence is in progress.**
 
-The Continental now has database-backed Projects, Evidence, and Experience workspaces, with reusable proof connected across records. v0.1 remains in progress: Certifications now have both an API and a dedicated credential workspace, but Profile management is not yet complete; Skills & Proof inspection is included.
+The Continental now has database-backed Projects, Evidence, and Experience workspaces, with reusable proof connected across records. v0.1 remains in progress: Certifications have both an API and a credential workspace; Profile has a new API foundation but no frontend workspace yet; and Skills & Proof inspection is included.
 
 ### Working
 
@@ -29,6 +29,7 @@ The Continental now has database-backed Projects, Evidence, and Experience works
 - Many-to-many evidence and skill relationships
 - Case-insensitive skill reuse and normalization
 - Skills & Proof inventory: searchable skill names, evidence coverage filters, record counts, and drill-down with provenance (read-only; no invented proficiency scores)
+- Profile API foundation: a single owner-entered career identity with headline, contact links, summary, target roles, and availability; additive migration and test coverage (no Profile UI yet)
 - Certification Registry: create/edit/delete credentials; issuer, optional issue/expiration dates, credential URL, description; reusable Skill/Evidence links; and date-based status filtering
 - Skill coverage derived from saved evidence status, including unsupported skills whose last evidence was removed
 - FastAPI backend
@@ -48,7 +49,7 @@ The Continental now has database-backed Projects, Evidence, and Experience works
 
 ### Next
 
-- Profile management and remaining v0.1 release validation
+- Profile workspace/frontend (Profile 1B) and remaining v0.1 release validation
 - Screenshot review with sanitized demonstration data
 
 ---
@@ -143,9 +144,9 @@ API docs:
 http://127.0.0.1:8000/docs
 ```
 
-Run API tests from `apps/api` with `python -m pytest tests/test_projects.py tests/test_experiences.py tests/test_skills.py tests/test_certifications.py -q`. From `apps/web`, run `npm run test:navigation`, `npm run test:projects`, `npm run test:workflow`, `npm run test:experiences`, `npm run test:skills`, `npm run test:certifications`, `npm run lint` and `npm run build`.
+Run API tests from `apps/api` with `python -m pytest tests/test_projects.py tests/test_experiences.py tests/test_skills.py tests/test_certifications.py tests/test_profile.py -q`. From `apps/web`, run `npm run test:navigation`, `npm run test:projects`, `npm run test:workflow`, `npm run test:experiences`, `npm run test:skills`, `npm run test:certifications`, `npm run lint` and `npm run build`.
 
-Choose **Projects** in the main navigation to create project records, then open a project to view its dedicated workspace, edit details, and link saved proof from **Evidence**. Routes `/armory` and `/armory/projects` remain unchanged for compatibility; project details use `/armory/projects/[id]`. Unlinking or deleting a project preserves underlying evidence. Creating new evidence from within a project automatically attaches it and returns to the project; a failed attachment can be retried without duplicating evidence. Use **Experience** (`/experiences`) to create role records and link existing Projects or Evidence without transferring ownership. Use **Skills** (`/skills`) to inspect evidence-derived skill coverage, then open an individual skill to see the original records and their source information. Skill records are not edited independently; evidence tags control relationships. A "verified" tag is owner-provided, not third-party certification. The Certifications workspace (`/certifications`) lets you record credentials and their dates, then link or detach existing Skills and Evidence without modifying the originals. A credential URL is an owner-entered link, not proof of issuer verification. This is still a single-user development application; user authentication and tenant separation are not yet implemented.
+Choose **Projects** in the main navigation to create project records, then open a project to view its dedicated workspace, edit details, and link saved proof from **Evidence**. Routes `/armory` and `/armory/projects` remain unchanged for compatibility; project details use `/armory/projects/[id]`. Unlinking or deleting a project preserves underlying evidence. Creating new evidence from within a project automatically attaches it and returns to the project; a failed attachment can be retried without duplicating evidence. Use **Experience** (`/experiences`) to create role records and link existing Projects or Evidence without transferring ownership. Use **Skills** (`/skills`) to inspect evidence-derived skill coverage, then open an individual skill to see the original records and their source information. Skill records are not edited independently; evidence tags control relationships. A "verified" tag is owner-provided, not third-party certification. The Certifications workspace (`/certifications`) lets you record credentials and their dates, then link or detach existing Skills and Evidence without modifying the originals. A credential URL is an owner-entered link, not proof of issuer verification. The backend now also exposes `GET /profile` (404 until configured) and `PUT /profile` (create/update a single career identity). No Profile page is exposed until Profile 1B. This is still a **local-only, unauthenticated single-user development application**: do not expose the API or personally identifiable profile data on the public internet. User authentication and tenant separation are not yet implemented.
 
 ---
 
