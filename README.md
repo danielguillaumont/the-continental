@@ -41,9 +41,6 @@ Evidence records can be reused across projects, experiences, certifications and 
 
 ## Current Status
 
-
-## Current Status
-
 **v0.1.0 - Career Record Foundation (released November 7, 2026).**
 
 The first career-record foundation is implemented: Profile, Experience, Projects, Evidence, Skills, and Certifications are backed by persistent models and working UI. Records can be linked without duplicating the originals.
