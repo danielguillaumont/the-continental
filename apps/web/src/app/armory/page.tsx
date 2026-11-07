@@ -159,17 +159,25 @@ export default function ArmoryPage() {
             </p>
           </div>
 
-          <Link
-            href="/armory/new"
-            className="inline-flex h-9 w-fit shrink-0 items-center gap-2 rounded-md bg-gold px-3.5 text-[13px] font-semibold text-text-inverse transition-colors duration-150 hover:bg-gold-hover active:bg-gold-active"
-          >
-            <Plus
-              aria-hidden="true"
-              className="size-4"
-              strokeWidth={1.8}
-            />
-            Add Evidence
-          </Link>
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              href="/armory/projects"
+              className="inline-flex h-9 items-center rounded-md border border-border px-3.5 text-[13px] font-semibold text-text-secondary transition-colors hover:border-gold hover:text-text-primary"
+            >
+              Browse projects
+            </Link>
+            <Link
+              href="/armory/new"
+              className="inline-flex h-9 w-fit shrink-0 items-center gap-2 rounded-md bg-gold px-3.5 text-[13px] font-semibold text-text-inverse transition-colors duration-150 hover:bg-gold-hover active:bg-gold-active"
+            >
+              <Plus
+                aria-hidden="true"
+                className="size-4"
+                strokeWidth={1.8}
+              />
+              Add Evidence
+            </Link>
+          </div>
         </div>
 
         <section

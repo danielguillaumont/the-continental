@@ -12,7 +12,7 @@ The Continental is a career intelligence platform that turns projects, experienc
 
 **v0.1 — My Evidence is in progress.**
 
-The Continental now has a working database-backed evidence system with creation, persistence, listing, inspection, editing, deletion, search, filtering, and reusable skill relationships.
+The Continental now has a working database-backed evidence system and a project registry that groups supporting evidence without duplicating it. v0.1 is still in progress; profile, experience and certification domain records are not yet complete.
 
 ### Working
 
@@ -36,11 +36,16 @@ The Continental now has a working database-backed evidence system with creation,
 - Database-backed evidence summaries and skill counts
 - Evidence provenance and record history
 - Desktop and mobile navigation
+- Project registry: create, inspect, edit, and delete project records
+- Projects can link and unlink existing evidence (without deleting original evidence)
+- Project/evidence relational tables with additive Alembic migration
+- API integration tests for project lifecycle and relationship integrity
 
 ### Next
 
-- Experience and project relationships
-- Continue building the Armory
+- Experience and certification entities and relationships
+- Profile/skill evidence inspection and remaining v0.1 release validation
+- Screenshot review with sanitized demonstration data
 
 ---
 
@@ -93,6 +98,9 @@ Only working product areas are exposed in the application.
 
 ## Run Locally
 
+For a fresh checkout, create and activate the Python virtual environment and install dependencies from `apps/api/requirements.txt`. For development tests, use `apps/api/requirements-dev.txt` (includes `httpx` and `pytest`). Run `alembic upgrade head` from `apps/api` after starting PostgreSQL and before using new API routes. **Do not run `alembic downgrade` on an important database:** the project migration downgrade drops project records.
+
+
 Start PostgreSQL:
 
 ```bash
@@ -126,6 +134,10 @@ API docs:
 ```text
 http://127.0.0.1:8000/docs
 ```
+
+Run the API tests from `apps/api` with `python -m pytest tests/test_projects.py -q`, and web checks from `apps/web` with `npm run lint` and `npm run build`.
+
+In the Armory, select **Browse projects** to create project records and attach existing evidence. Unlinking or deleting a project preserves the underlying evidence. This is still a single-user development application; user authentication and tenant separation are not yet implemented.
 
 ---
 

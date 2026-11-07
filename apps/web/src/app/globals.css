@@ -1,6 +1,11 @@
 @import "tailwindcss";
 
 :root {
+  /* Self-hosted fonts: preserve the established design-system token names. */
+  --font-geist-sans: "Geist Variable";
+  --font-geist-mono: "Geist Mono Variable";
+  --font-cormorant: "Cormorant Garamond";
+
   /* Core surfaces */
   --canvas: #0b0d0e;
   --sidebar: #0e1012;

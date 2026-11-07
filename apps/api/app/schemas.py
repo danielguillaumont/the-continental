@@ -81,3 +81,38 @@ class EvidenceRead(BaseModel):
 class EvidenceValidationResponse(BaseModel):
     valid: Literal[True] = True
     evidence: EvidenceCreate
+
+ProjectStatus = Literal["active", "completed", "paused"]
+
+
+class ProjectWrite(BaseModel):
+    name: str = Field(min_length=3, max_length=160)
+    summary: str = Field(min_length=10, max_length=2000)
+    repositoryUrl: HttpUrl | None = None
+    status: ProjectStatus = "active"
+
+    @field_validator("name", "summary")
+    @classmethod
+    def normalize_project_text(cls, value: str) -> str:
+        cleaned = value.strip()
+        if len(cleaned) < 3:
+            raise ValueError("A meaningful value is required.")
+        return cleaned
+
+
+class ProjectEvidenceRead(BaseModel):
+    id: UUID
+    title: str
+    kind: EvidenceKind
+    status: EvidenceStatus
+
+
+class ProjectRead(BaseModel):
+    id: UUID
+    name: str
+    summary: str
+    repositoryUrl: str | None = None
+    status: ProjectStatus
+    evidence: list[ProjectEvidenceRead]
+    createdAt: datetime
+    updatedAt: datetime
