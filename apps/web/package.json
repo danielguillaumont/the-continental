@@ -12,7 +12,8 @@
     "test:workflow": "node --experimental-strip-types --test tests/project-evidence-flow.test.mjs",
     "test:skills": "node --experimental-strip-types --test tests/skill-workspace.test.mjs",
     "test:experiences": "node --experimental-strip-types --test tests/experience-workspace.test.mjs",
-    "test:certifications": "node --experimental-strip-types --test tests/certification-workspace.test.mjs"
+    "test:certifications": "node --experimental-strip-types --test tests/certification-workspace.test.mjs",
+    "test:profile": "node --experimental-strip-types --test tests/profile-workspace.test.mjs"
   },
   "dependencies": {
     "@fontsource-variable/geist": "5.3.0",

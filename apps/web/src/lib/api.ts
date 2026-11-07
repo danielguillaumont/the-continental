@@ -1,3 +1,4 @@
+import type { ProfileRecord, ProfileWritePayload } from "@/types/profile";
 import type { CertificationRecord, CertificationWritePayload } from "@/types/certification";
 import type { SkillDetail, SkillSummary } from "@/types/skill";
 import type { ExperienceRecord, ExperienceWritePayload } from "@/types/experience";
@@ -281,4 +282,24 @@ export async function attachCertificationEvidence(id: string, evidenceId: string
 
 export async function detachCertificationEvidence(id: string, evidenceId: string): Promise<CertificationRecord> {
   return readCertification(await fetch(`${API_BASE_URL}/certifications/${encodeURIComponent(id)}/evidence/${encodeURIComponent(evidenceId)}`, { method: "DELETE" }));
+}
+
+
+// Profile 1B: GET returns null only for the expected 404 (not configured yet).
+// Every other error is surfaced so the UI never silently treats an outage as an empty profile.
+export async function getProfile(): Promise<ProfileRecord | null> {
+  const response = await fetch(`${API_BASE_URL}/profile`, { cache: "no-store" });
+  if (response.status === 404) return null;
+  if (!response.ok) throw new Error(await getErrorMessage(response));
+  return response.json();
+}
+
+export async function saveProfile(payload: ProfileWritePayload): Promise<ProfileRecord> {
+  const response = await fetch(`${API_BASE_URL}/profile`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) throw new Error(await getErrorMessage(response));
+  return response.json();
 }
