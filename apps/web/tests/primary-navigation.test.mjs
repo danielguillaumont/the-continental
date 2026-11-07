@@ -2,8 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { activeDestination, destinations } from "../src/lib/primary-navigation.ts";
 
-test("only six implemented product destinations are exposed", () => {
-  assert.deepEqual(Object.keys(destinations), ["overview", "projects", "experiences", "evidence", "skills", "certifications"]);
+test("only seven implemented product destinations are exposed", () => {
+  assert.deepEqual(Object.keys(destinations), ["profile", "overview", "projects", "experiences", "evidence", "skills", "certifications"]);
 });
 
 test("project routes do not activate the evidence destination", () => {
@@ -45,4 +45,13 @@ test("Certification index and details activate Certifications only", () => {
     assert.equal(activeDestination(path), "certifications");
   }
   assert.equal(activeDestination("/skills/skill-id"), "skills");
+});
+
+
+test("Profile route is active independently of the career record sections", () => {
+  assert.equal(activeDestination("/profile"), "profile");
+  assert.equal(activeDestination("/profile/"), "profile");
+  assert.equal(activeDestination("/profiles"), null);
+  assert.equal(activeDestination("/"), "overview");
+  assert.equal(activeDestination("/experiences"), "experiences");
 });

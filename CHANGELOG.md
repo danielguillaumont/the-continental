@@ -2,6 +2,8 @@
 
 ## Unreleased — v0.1 My Evidence
 
+- Added Profile Management Slice 1B: responsive owner-entered professional identity workspace, local-only contact and portfolio links, profile API integration, target role validation, clear unconfigured/error/edit/success states, navigation and frontend regression coverage. No schema or backend changes.
+
 - Added Profile Management Slice 1A (backend only): singleton career profile, validated identity/contact/summary/role targets, additive PostgreSQL migration, and disposable regression tests. No frontend destination, new dependencies, authentication or data seeding. Personal data must remain local until authentication exists.
 
 - Added Certifications Registry Slice 1B: standalone responsive credential inventory/details, create/edit/delete workflows, calendar-based expiry status, Skill/Evidence linking, navigation, and frontend regression checks. No schema or backend changes; credential data and URLs remain owner-entered.

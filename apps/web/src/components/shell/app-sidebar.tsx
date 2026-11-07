@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Award, BriefcaseBusiness, FolderKanban, LayoutDashboard, LibraryBig, Tags, type LucideIcon } from "lucide-react";
+import { Award, BriefcaseBusiness, FolderKanban, LayoutDashboard, LibraryBig, Tags, UserRound, type LucideIcon } from "lucide-react";
 
 import { BrandMark } from "@/components/shell/brand-mark";
 import { activeDestination, destinations, type Destination } from "@/lib/primary-navigation";
@@ -48,6 +48,7 @@ export function SidebarNavigation({ onNavigate }: { onNavigate?: () => void }) {
     <nav aria-label="Primary navigation" className="flex min-h-0 flex-1 flex-col overflow-y-auto px-3 py-5">
       <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-text-muted">Workspace</p>
       <SidebarItem icon={LayoutDashboard} destination="overview" active={active === "overview"} onSelect={onNavigate} />
+      <SidebarItem icon={UserRound} destination="profile" active={active === "profile"} onSelect={onNavigate} />
       <p className="mb-2 mt-6 px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-text-muted">Your career record</p>
       <div className="space-y-1">
         <SidebarItem icon={BriefcaseBusiness} destination="experiences" active={active === "experiences"} onSelect={onNavigate} />
