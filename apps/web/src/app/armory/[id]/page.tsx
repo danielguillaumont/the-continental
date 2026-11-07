@@ -158,7 +158,7 @@ export default function EvidenceDetailPage() {
   }
 
   return (
-    <AppShell sectionLabel="Armory">
+    <AppShell sectionLabel="Evidence">
       <div className="mx-auto w-full max-w-[1120px] px-4 py-7 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
         <Link
           href="/armory"
@@ -169,7 +169,7 @@ export default function EvidenceDetailPage() {
             className="size-4"
             strokeWidth={1.8}
           />
-          Back to Armory
+          Back to Evidence
         </Link>
 
         {loading ? (

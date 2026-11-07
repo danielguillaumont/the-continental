@@ -140,22 +140,21 @@ export default function ArmoryPage() {
   }
 
   return (
-    <AppShell sectionLabel="Armory">
+    <AppShell sectionLabel="Evidence">
       <div className="mx-auto w-full max-w-[1440px] px-4 py-7 sm:px-6 sm:py-8 lg:px-8 lg:py-10 xl:px-10">
         <div className="flex flex-col gap-5 border-b border-border-subtle pb-7 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-gold">
-              Armory
+              Evidence library
             </p>
 
             <h1 className="mt-2 text-[22px] font-semibold tracking-[-0.02em] text-text-primary sm:text-[24px]">
-              Your evidence, organized.
+              Your proof, all in one place.
             </h1>
 
             <p className="mt-2 max-w-2xl text-[13px] leading-5 text-text-secondary">
-              The Armory is the structured record of projects,
-              experience, certifications, education, and artifacts
-              that The Continental can use to support career claims.
+              Store the records that back up your skills and projects. Evidence is
+              reusable: one record can support more than one project.
             </p>
           </div>
 
@@ -164,7 +163,7 @@ export default function ArmoryPage() {
               href="/armory/projects"
               className="inline-flex h-9 items-center rounded-md border border-border px-3.5 text-[13px] font-semibold text-text-secondary transition-colors hover:border-gold hover:text-text-primary"
             >
-              Browse projects
+              View projects
             </Link>
             <Link
               href="/armory/new"
@@ -175,9 +174,13 @@ export default function ArmoryPage() {
                 className="size-4"
                 strokeWidth={1.8}
               />
-              Add Evidence
+              Add evidence
             </Link>
           </div>
+        </div>
+
+        <div className="mt-5 rounded-lg border border-border-subtle bg-surface px-4 py-3 text-[12px] leading-5 text-text-secondary">
+          <p><strong className="font-semibold text-text-primary">Evidence vs. projects:</strong> this library stores individual proof records, including project-related artifacts. Group them under a project in the Projects workspace.</p>
         </div>
 
         <section
@@ -294,7 +297,7 @@ export default function ArmoryPage() {
                 className="h-10 w-full rounded-md border border-border bg-surface-raised px-3 text-[13px] text-text-primary outline-none transition-colors focus:border-gold"
               >
                 <option value="all">All types</option>
-                <option value="project">Projects</option>
+                <option value="project">Project evidence</option>
                 <option value="experience">
                   Experience
                 </option>
@@ -419,7 +422,7 @@ export default function ArmoryPage() {
                 href="/armory/new"
                 className="mt-4 inline-flex text-[12px] font-semibold text-gold transition-colors hover:text-gold-hover"
               >
-                Add Evidence
+                Add evidence
               </Link>
             </div>
           ) : filteredEvidence.length === 0 ? (

@@ -2,6 +2,8 @@
 
 ## Unreleased — v0.1 My Evidence
 
+- Started UX Foundation Slice 3A: separate Overview, Projects and Evidence in navigation, clarify pages and project/evidence workflow, and extend screenshot capture coverage.
+
 - Added the project registry and project-to-evidence linking workflow.
 - Added project CRUD and link/unlink API routes backed by an additive PostgreSQL migration.
 - Added a responsive project workspace with loading, empty, error and delete confirmation states.

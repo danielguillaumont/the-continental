@@ -2,7 +2,7 @@
 [CmdletBinding()]
 param(
     [string]$BaseUrl = 'http://127.0.0.1:3000',
-    [string[]]$Pages = @('/', '/armory'),
+    [string[]]$Pages = @('/', '/armory/projects', '/armory'),
     [string]$OutputDirectory = '',
     [switch]$IConfirmDemoData,
     [switch]$DesktopOnly,
@@ -48,7 +48,7 @@ $commit = (& git -C $repo rev-parse --short HEAD).Trim()
 
 foreach ($route in $Pages) {
     if ($route -notmatch '^/[a-zA-Z0-9/_-]*$') { throw "Invalid relative route: $route" }
-    $slug = if ($route -eq '/') { 'lobby' } else { ($route.Trim('/') -replace '/', '-') }
+    $slug = if ($route -eq '/') { 'overview' } else { ($route.Trim('/') -replace '/', '-') }
     $url = $BaseUrl.TrimEnd('/') + $route
     foreach ($viewport in $viewports) {
         $filename = '{0}-{1}.png' -f $slug, $viewport.name
