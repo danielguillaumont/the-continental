@@ -10,9 +10,9 @@ The Continental is a career intelligence platform that turns projects, experienc
 
 ## Current Status
 
-**v0.1 — My Evidence is in progress.**
+**v0.1.0 — My Evidence (release candidate; not tagged yet).**
 
-The Continental now has database-backed Projects, Evidence, and Experience workspaces, with reusable proof connected across records. v0.1 remains in progress: Certifications have both an API and a credential workspace; Profile now has both a persisted API and frontend workspace; and Skills & Proof inspection is included.
+The first career-record foundation is implemented: Profile, Experience, Projects, Evidence, Skills, and Certifications are backed by persistent models and working UI. Records can be linked without duplicating the originals. The next step is release readiness, not new functionality. This repository is still a local-only development application, not a hosted service.
 
 ### Working
 
@@ -47,10 +47,12 @@ The Continental now has database-backed Projects, Evidence, and Experience works
 - API integration tests for project lifecycle and relationship integrity
 - Structured Experience API, PostgreSQL model, additive migration, and responsive Experience workspace (list, create, edit, detail, delete, project/evidence associations)
 
-### Next
+### Release readiness
 
-- Final v0.1 release validation, secure local-only usage review, and release tagging
-- Screenshot review with sanitized demonstration data
+- Local acceptance on November 7, 2026: **38 backend tests and 51 frontend tests passed**; ESLint, the Next.js production build and a production-only npm audit passed (0 reported vulnerabilities).
+- Database at Alembic revision `b7c2e49a1d03`, with existing records preserved through the Profile migration. These are **local checks**, not a claim of production readiness.
+- GitHub Actions CI and a final clean-checkout review are the remaining release gates. See [`docs/releases/v0.1.0-rc.md`](docs/releases/v0.1.0-rc.md).
+- Screenshots must use sanitized demonstration records. Do not publish actual profile or career data.
 
 ---
 
@@ -107,30 +109,35 @@ Only working product areas are exposed in the application.
 
 ## Run Locally
 
-For a fresh checkout, create and activate the Python virtual environment and install dependencies from `apps/api/requirements.txt`. For development tests, use `apps/api/requirements-dev.txt` (includes `httpx` and `pytest`). Run `alembic upgrade head` from `apps/api` after starting PostgreSQL and before using new API routes. **Do not run `alembic downgrade` on an important database:** the project migration downgrade drops project records.
+Prerequisites: Python 3.12+, Node.js 22+, Docker Desktop with Compose, and Git. Use a fresh clone for these commands. They are Windows PowerShell instructions; the local `.env` is ignored by Git and must stay private.
 
+From the repository root, in **DB**:
 
-Start PostgreSQL:
-
-```bash
+```powershell
+Copy-Item .env.example .env
+# If changing the sample password, update both POSTGRES_PASSWORD and the password in DATABASE_URL.
 docker compose up -d postgres
 ```
 
-Start the API:
+In **API Server**, still from the repository root:
 
 ```powershell
 cd apps/api
-.\.venv\Scripts\Activate.ps1
-uvicorn app.main:app --reload --port 8000
+py -3 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+.\.venv\Scripts\python.exe -m alembic upgrade head
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-Start the web app:
+In **Web**, from the repository root:
 
-```bash
+```powershell
 cd apps/web
-npm install
-npm run dev
+npm.cmd ci
+npm.cmd run dev -- --hostname 127.0.0.1
 ```
+
+For an existing local checkout, **do not overwrite `.env`, delete Docker volumes, or downgrade migrations**. Keep PostgreSQL data and private profile records out of public artifacts.
 
 Web app:
 
@@ -144,7 +151,7 @@ API docs:
 http://127.0.0.1:8000/docs
 ```
 
-Run API tests from `apps/api` with `python -m pytest tests/test_projects.py tests/test_experiences.py tests/test_skills.py tests/test_certifications.py tests/test_profile.py -q`. From `apps/web`, run `npm run test:navigation`, `npm run test:projects`, `npm run test:workflow`, `npm run test:experiences`, `npm run test:skills`, `npm run test:certifications`, `npm run test:profile`, `npm run lint` and `npm run build`.
+Run API tests from `apps/api` using `.\.venv\Scripts\python.exe -m pytest tests -q`. In `apps/web`, use `npm.cmd run test:navigation`, `test:projects`, `test:workflow`, `test:experiences`, `test:skills`, `test:certifications`, `test:profile`, then `npm.cmd run lint`, `npm.cmd run build`, and `npm.cmd audit --omit=dev`. GitHub Actions runs the same suite on proposed changes.
 
 Choose **Projects** in the main navigation to create project records, then open a project to view its dedicated workspace, edit details, and link saved proof from **Evidence**. Routes `/armory` and `/armory/projects` remain unchanged for compatibility; project details use `/armory/projects/[id]`. Unlinking or deleting a project preserves underlying evidence. Creating new evidence from within a project automatically attaches it and returns to the project; a failed attachment can be retried without duplicating evidence. Use **Experience** (`/experiences`) to create role records and link existing Projects or Evidence without transferring ownership. Use **Skills** (`/skills`) to inspect evidence-derived skill coverage, then open an individual skill to see the original records and their source information. Skill records are not edited independently; evidence tags control relationships. A "verified" tag is owner-provided, not third-party certification. The Certifications workspace (`/certifications`) lets you record credentials and their dates, then link or detach existing Skills and Evidence without modifying the originals. A credential URL is an owner-entered link, not proof of issuer verification. The **Profile** workspace (`/profile`) calls `GET /profile` (404 until configured) and `PUT /profile` (create/update one career identity). This is still a **local-only, unauthenticated single-user development application**: do not expose the API or personally identifiable profile data on the public internet. User authentication and tenant separation are not yet implemented.
 
