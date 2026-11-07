@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -10,9 +11,12 @@ import {
 } from "lucide-react";
 
 import {
+  attachProjectEvidence,
   createEvidence,
   updateEvidence,
 } from "@/lib/api";
+import { createAndLinkEvidence, retryProjectLink } from "@/lib/project-evidence-flow";
+import { projectDetailsUrl } from "@/lib/project-workspace";
 import type {
   EvidenceKind,
   EvidenceRecord,
@@ -34,6 +38,7 @@ type FormErrors = Partial<Record<keyof EvidenceDraft, string>>;
 
 type EvidenceFormProps = {
   evidence?: EvidenceRecord;
+  projectId?: string;
 };
 
 const emptyDraft: EvidenceDraft = {
@@ -89,18 +94,22 @@ function isValidHttpUrl(value: string) {
 
 export function EvidenceForm({
   evidence,
+  projectId,
 }: EvidenceFormProps) {
   const router = useRouter();
   const editing = Boolean(evidence);
 
-  const [draft, setDraft] = useState<EvidenceDraft>(() =>
-    evidenceToDraft(evidence),
-  );
+  const [draft, setDraft] = useState<EvidenceDraft>(() => {
+    const initial = evidenceToDraft(evidence);
+    return projectId && !evidence ? { ...initial, kind: "artifact" } : initial;
+  });
   const [errors, setErrors] = useState<FormErrors>({});
   const [reviewed, setReviewed] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [submitError, setSubmitError] =
     useState<string | null>(null);
+  const [savedButUnlinkedId, setSavedButUnlinkedId] = useState<string | null>(null);
+  const [linkError, setLinkError] = useState<string | null>(null);
 
   const parsedSkills = useMemo(
     () =>
@@ -166,24 +175,37 @@ export function EvidenceForm({
     return Object.keys(nextErrors).length === 0;
   }
 
-  async function handleSubmit(
-    event: FormEvent<HTMLFormElement>,
-  ) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (isSaving) return;
     setSubmitError(null);
+
+    // A previous POST succeeded. Retrying must NEVER create a second record.
+    if (savedButUnlinkedId && projectId) {
+      setIsSaving(true);
+      setLinkError(null);
+      try {
+        await retryProjectLink(projectId, savedButUnlinkedId, attachProjectEvidence);
+        router.push(projectDetailsUrl(projectId));
+        router.refresh();
+      } catch (error) {
+        setLinkError(error instanceof Error ? error.message : "Project linking failed again.");
+      } finally {
+        setIsSaving(false);
+      }
+      return;
+    }
 
     if (!validate()) {
       setReviewed(false);
       return;
     }
-
     if (!reviewed) {
       setReviewed(true);
       return;
     }
 
     setIsSaving(true);
-
     const payload = {
       kind: draft.kind,
       title: draft.title.trim(),
@@ -193,9 +215,7 @@ export function EvidenceForm({
       source: draft.sourceLabel.trim()
         ? {
             label: draft.sourceLabel.trim(),
-            ...(draft.sourceUrl.trim()
-              ? { url: draft.sourceUrl.trim() }
-              : {}),
+            ...(draft.sourceUrl.trim() ? { url: draft.sourceUrl.trim() } : {}),
           }
         : undefined,
       occurredAt: draft.occurredAt || undefined,
@@ -204,22 +224,27 @@ export function EvidenceForm({
     try {
       if (evidence) {
         await updateEvidence(evidence.id, payload);
-
         router.push(`/armory/${evidence.id}`);
+      } else if (projectId) {
+        const result = await createAndLinkEvidence(
+          projectId, payload, createEvidence, attachProjectEvidence,
+        );
+        if (result.kind === "saved-unlinked") {
+          setSavedButUnlinkedId(result.evidenceId);
+          setLinkError(result.reason);
+          return;
+        }
+        router.push(projectDetailsUrl(projectId));
       } else {
         await createEvidence(payload);
-
         router.push("/armory");
       }
-
       router.refresh();
     } catch (error) {
       setSubmitError(
         error instanceof Error
           ? error.message
-          : editing
-            ? "Evidence could not be updated."
-            : "Evidence could not be saved.",
+          : editing ? "Evidence could not be updated." : "Evidence could not be saved.",
       );
     } finally {
       setIsSaving(false);
@@ -231,7 +256,7 @@ export function EvidenceForm({
       onSubmit={handleSubmit}
       className="space-y-6"
     >
-      <div className="overflow-hidden rounded-lg border border-border bg-surface">
+      <fieldset disabled={isSaving || savedButUnlinkedId !== null} className="min-w-0 overflow-hidden rounded-lg border border-border bg-surface disabled:opacity-75">
         <div className="border-b border-border-subtle px-5 py-4">
           <div className="flex items-center gap-2">
             <FilePlus2
@@ -478,9 +503,9 @@ export function EvidenceForm({
             ) : null}
           </div>
         </div>
-      </div>
+      </fieldset>
 
-      {reviewed ? (
+      {reviewed && !savedButUnlinkedId ? (
         <div className="rounded-lg border border-success-border bg-success-surface p-4">
           <div className="flex items-start gap-3">
             <CheckCircle2
@@ -503,6 +528,20 @@ export function EvidenceForm({
                   : " Save Evidence will write this record to The Continental database."}
               </p>
             </div>
+          </div>
+        </div>
+      ) : null}
+
+      {savedButUnlinkedId && projectId ? (
+        <div role="alert" className="rounded-lg border border-warning-border bg-warning-surface p-4">
+          <p className="text-[14px] font-semibold text-text-primary">Evidence saved; project attachment still needed.</p>
+          <p className="mt-2 text-[13px] leading-6 text-text-secondary">
+            Your evidence record is safely stored. The attachment failed: {linkError ?? "Please try again."}
+            Retrying below will only attach the saved record; it will not create a duplicate.
+          </p>
+          <div className="mt-3 flex flex-wrap gap-4 text-[13px] font-semibold">
+            <Link href={`/armory/${savedButUnlinkedId}`} className="min-h-10 text-gold hover:underline">Open saved evidence</Link>
+            <Link href={projectDetailsUrl(projectId)} className="min-h-10 text-gold hover:underline">Return to project</Link>
           </div>
         </div>
       ) : null}
@@ -538,8 +577,10 @@ export function EvidenceForm({
             strokeWidth={1.8}
           />
 
-          {reviewed
-            ? `Validated locally and ready to ${
+          {savedButUnlinkedId
+            ? "The record is saved. Only the attachment is pending."
+            : reviewed
+              ? `Validated locally and ready to ${
                 editing ? "update" : "save"
               }.`
             : "Review the record before saving."}
@@ -550,8 +591,10 @@ export function EvidenceForm({
           disabled={isSaving}
           className="inline-flex h-9 w-fit items-center justify-center rounded-md bg-gold px-4 text-[13px] font-semibold text-text-inverse transition-colors duration-150 hover:bg-gold-hover active:bg-gold-active disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {isSaving
-            ? editing
+          {savedButUnlinkedId
+            ? isSaving ? "Attaching…" : "Retry attachment"
+            : isSaving
+              ? editing
               ? "Saving Changes..."
               : "Saving..."
             : reviewed
