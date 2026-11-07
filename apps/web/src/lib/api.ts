@@ -1,3 +1,4 @@
+import type { ProjectRecord, ProjectWritePayload } from "@/types/project";
 import type {
   EvidenceKind,
   EvidenceRecord,
@@ -115,4 +116,50 @@ export async function getEvidence(
   }
 
   return response.json();
+}
+
+async function readProjectResponse(response: Response): Promise<ProjectRecord> {
+  if (!response.ok) {
+    throw new Error(await getErrorMessage(response));
+  }
+  return response.json();
+}
+
+export async function listProjects(): Promise<ProjectRecord[]> {
+  const response = await fetch(`${API_BASE_URL}/projects`);
+  if (!response.ok) throw new Error(await getErrorMessage(response));
+  return response.json();
+}
+
+export async function createProject(payload: ProjectWritePayload): Promise<ProjectRecord> {
+  return readProjectResponse(await fetch(`${API_BASE_URL}/projects`, {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  }));
+}
+
+export async function updateProject(id: string, payload: ProjectWritePayload): Promise<ProjectRecord> {
+  return readProjectResponse(await fetch(`${API_BASE_URL}/projects/${id}`, {
+    method: "PUT", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  }));
+}
+
+export async function deleteProject(id: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/projects/${id}`, { method: "DELETE" });
+  if (!response.ok) throw new Error(await getErrorMessage(response));
+}
+
+export async function attachProjectEvidence(projectId: string, evidenceId: string): Promise<ProjectRecord> {
+  return readProjectResponse(await fetch(
+    `${API_BASE_URL}/projects/${projectId}/evidence/${evidenceId}`,
+    { method: "POST" },
+  ));
+}
+
+export async function detachProjectEvidence(projectId: string, evidenceId: string): Promise<ProjectRecord> {
+  return readProjectResponse(await fetch(
+    `${API_BASE_URL}/projects/${projectId}/evidence/${evidenceId}`,
+    { method: "DELETE" },
+  ));
 }

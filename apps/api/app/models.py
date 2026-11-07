@@ -35,6 +35,50 @@ evidence_skills = Table(
 )
 
 
+project_evidence = Table(
+    "project_evidence",
+    Base.metadata,
+    Column(
+        "project_id",
+        PGUUID(as_uuid=True),
+        ForeignKey("projects.id", ondelete="CASCADE"),
+        primary_key=True,
+    ),
+    Column(
+        "evidence_id",
+        PGUUID(as_uuid=True),
+        ForeignKey("evidence.id", ondelete="CASCADE"),
+        primary_key=True,
+    ),
+)
+
+
+class Project(Base):
+    __tablename__ = "projects"
+
+    id: Mapped[UUID] = mapped_column(
+        PGUUID(as_uuid=True), primary_key=True, default=uuid4
+    )
+    name: Mapped[str] = mapped_column(String(160), nullable=False)
+    summary: Mapped[str] = mapped_column(Text, nullable=False)
+    repository_url: Mapped[str | None] = mapped_column(Text, nullable=True)
+    status: Mapped[str] = mapped_column(String(20), nullable=False, default="active")
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False,
+        server_default=func.now(), onupdate=func.now()
+    )
+
+    evidence_items: Mapped[list["Evidence"]] = relationship(
+        secondary=project_evidence,
+        back_populates="projects",
+        lazy="selectin",
+        order_by="Evidence.created_at",
+    )
+
+
 class Skill(Base):
     __tablename__ = "skills"
 
@@ -124,4 +168,9 @@ class Evidence(Base):
         nullable=False,
         server_default=func.now(),
         onupdate=func.now(),
+    )
+
+    projects: Mapped[list[Project]] = relationship(
+        secondary=project_evidence,
+        back_populates="evidence_items",
     )

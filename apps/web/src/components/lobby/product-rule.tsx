@@ -21,7 +21,7 @@ export function ProductRule() {
       </p>
 
       <div className="mt-4 border-t border-border-subtle pt-3 font-technical text-[10px] uppercase tracking-[0.1em] text-text-muted">
-        v0.0 · Foundation
+        v0.1 · Evidence foundation
       </div>
     </section>
   );

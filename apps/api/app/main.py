@@ -12,13 +12,16 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.database import get_database_session
-from app.models import Evidence, Skill
+from app.models import Evidence, Project, Skill
 from app.schemas import (
     EvidenceCreate,
     EvidenceRead,
     EvidenceSource,
     EvidenceUpdate,
     EvidenceValidationResponse,
+    ProjectEvidenceRead,
+    ProjectRead,
+    ProjectWrite,
 )
 
 
@@ -323,3 +326,153 @@ def list_evidence(
         evidence_to_response(record)
         for record in records
     ]
+
+# Projects group multiple independent evidence records. Deleting a project
+# never removes its underlying evidence or skills.
+def project_to_response(record: Project) -> ProjectRead:
+    return ProjectRead(
+        id=record.id,
+        name=record.name,
+        summary=record.summary,
+        repositoryUrl=record.repository_url,
+        status=record.status,
+        evidence=[
+            ProjectEvidenceRead(
+                id=item.id,
+                title=item.title,
+                kind=item.kind,
+                status=item.status,
+            )
+            for item in record.evidence_items
+        ],
+        createdAt=record.created_at,
+        updatedAt=record.updated_at,
+    )
+
+
+def get_project_or_404(session: Session, project_id: UUID) -> Project:
+    record = session.get(Project, project_id)
+    if record is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Project not found.",
+        )
+    return record
+
+
+@app.get("/projects", response_model=list[ProjectRead], tags=["Projects"])
+def list_projects(
+    session: Session = Depends(get_database_session),
+) -> list[ProjectRead]:
+    records = session.scalars(
+        select(Project).order_by(Project.created_at.desc(), Project.id)
+    ).all()
+    return [project_to_response(record) for record in records]
+
+
+@app.post(
+    "/projects",
+    response_model=ProjectRead,
+    status_code=status.HTTP_201_CREATED,
+    tags=["Projects"],
+)
+def create_project(
+    payload: ProjectWrite,
+    session: Session = Depends(get_database_session),
+) -> ProjectRead:
+    record = Project(
+        name=payload.name,
+        summary=payload.summary,
+        repository_url=str(payload.repositoryUrl) if payload.repositoryUrl else None,
+        status=payload.status,
+    )
+    session.add(record)
+    session.commit()
+    session.refresh(record)
+    return project_to_response(record)
+
+
+@app.get("/projects/{project_id}", response_model=ProjectRead, tags=["Projects"])
+def get_project(
+    project_id: UUID,
+    session: Session = Depends(get_database_session),
+) -> ProjectRead:
+    return project_to_response(get_project_or_404(session, project_id))
+
+
+@app.put("/projects/{project_id}", response_model=ProjectRead, tags=["Projects"])
+def update_project(
+    project_id: UUID,
+    payload: ProjectWrite,
+    session: Session = Depends(get_database_session),
+) -> ProjectRead:
+    record = get_project_or_404(session, project_id)
+    record.name = payload.name
+    record.summary = payload.summary
+    record.repository_url = str(payload.repositoryUrl) if payload.repositoryUrl else None
+    record.status = payload.status
+    session.commit()
+    session.refresh(record)
+    return project_to_response(record)
+
+
+@app.delete(
+    "/projects/{project_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    tags=["Projects"],
+)
+def delete_project(
+    project_id: UUID,
+    session: Session = Depends(get_database_session),
+) -> Response:
+    record = get_project_or_404(session, project_id)
+    session.delete(record)
+    session.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@app.post(
+    "/projects/{project_id}/evidence/{evidence_id}",
+    response_model=ProjectRead,
+    tags=["Projects"],
+)
+def attach_project_evidence(
+    project_id: UUID,
+    evidence_id: UUID,
+    session: Session = Depends(get_database_session),
+) -> ProjectRead:
+    record = get_project_or_404(session, project_id)
+    evidence = session.get(Evidence, evidence_id)
+    if evidence is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Evidence record not found.",
+        )
+    if evidence not in record.evidence_items:
+        record.evidence_items.append(evidence)
+        session.commit()
+        session.refresh(record)
+    return project_to_response(record)
+
+
+@app.delete(
+    "/projects/{project_id}/evidence/{evidence_id}",
+    response_model=ProjectRead,
+    tags=["Projects"],
+)
+def detach_project_evidence(
+    project_id: UUID,
+    evidence_id: UUID,
+    session: Session = Depends(get_database_session),
+) -> ProjectRead:
+    record = get_project_or_404(session, project_id)
+    evidence = session.get(Evidence, evidence_id)
+    if evidence is None or evidence not in record.evidence_items:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Evidence is not linked to this project.",
+        )
+    record.evidence_items.remove(evidence)
+    session.commit()
+    session.refresh(record)
+    return project_to_response(record)
