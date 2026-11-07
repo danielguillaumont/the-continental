@@ -34,7 +34,7 @@ Evidence records can be reused across projects, experiences, certifications and 
 
 **Engineering:** FastAPI, PostgreSQL, SQLAlchemy, Alembic, Next.js, React, TypeScript, regression tests, and GitHub Actions CI. Release checks included **38 backend tests and 51 frontend tests**, plus ESLint, a production build, and a production-dependency audit.
 
-**Release:** [v0.1.0 â€” Career Record Foundation](https://github.com/danielguillaumont/the-continental/releases/tag/v0.1.0) Â· **Next:** v0.2 Dossier â€” structured opportunity records from supplied job-posting text.
+**Release:** [v0.1.0 - Career Record Foundation](https://github.com/danielguillaumont/the-continental/releases/tag/v0.1.0) | **Next:** v0.2 Dossier - structured opportunity records from supplied job-posting text.
 
 > **Scope:** local, unauthenticated, single-user development milestone. Not publicly hosted; no login, tenant isolation, AI matching or independent credential verification. Do not publicly deploy this API or database with personal data.
 <!-- continental-portfolio:end -->
