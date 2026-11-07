@@ -12,7 +12,7 @@ The Continental is a career intelligence platform that turns projects, experienc
 
 **v0.1 — My Evidence is in progress.**
 
-The Continental now has a working database-backed evidence system and a project registry that groups supporting evidence without duplicating it. v0.1 is still in progress; profile, experience and certification domain records are not yet complete.
+The Continental now has a working database-backed evidence system and a project registry that groups supporting evidence without duplicating it. v0.1 is still in progress; profile and certification domain records are not yet complete; Experience API/storage is underway and its UI is not yet implemented.
 
 ### Working
 
@@ -41,11 +41,11 @@ The Continental now has a working database-backed evidence system and a project 
 - Project-aware evidence creation: save, auto-attach and return to the project; attachment failures preserve the new evidence ID for safe retry
 - Project/evidence relational tables with additive Alembic migration
 - API integration tests for project lifecycle and relationship integrity
+- Structured Experience API foundation (work roles, dates, accomplishments, project/evidence links) and additive migration; no Experience screens yet
 
 ### Next
 
-- Finish UX Foundation 3B2 validation: project-aware evidence creation, automatic linking and safe retry on partial failure
-- Experience and certification entities and relationships
+- Experience Registry UI, then certification entities and relationships
 - Profile/skill evidence inspection and remaining v0.1 release validation
 - Screenshot review with sanitized demonstration data
 

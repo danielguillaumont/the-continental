@@ -12,13 +12,16 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.database import get_database_session
-from app.models import Evidence, Project, Skill
+from app.models import Evidence, Experience, Project, Skill
 from app.schemas import (
     EvidenceCreate,
     EvidenceRead,
     EvidenceSource,
     EvidenceUpdate,
     EvidenceValidationResponse,
+    ExperienceProjectRead,
+    ExperienceRead,
+    ExperienceWrite,
     ProjectEvidenceRead,
     ProjectRead,
     ProjectWrite,
@@ -476,3 +479,201 @@ def detach_project_evidence(
     session.commit()
     session.refresh(record)
     return project_to_response(record)
+
+
+# Experience records can be connected to existing projects and evidence without
+# changing or deleting the independent source records.
+def experience_to_response(record: Experience) -> ExperienceRead:
+    return ExperienceRead(
+        id=record.id,
+        organization=record.organization,
+        title=record.title,
+        employmentType=record.employment_type,
+        location=record.location,
+        startDate=record.start_date,
+        endDate=record.end_date,
+        description=record.description,
+        highlights=record.highlights,
+        projects=[
+            ExperienceProjectRead(id=project.id, name=project.name, status=project.status)
+            for project in record.projects
+        ],
+        evidence=[
+            ProjectEvidenceRead(
+                id=item.id, title=item.title, kind=item.kind, status=item.status,
+            )
+            for item in record.evidence_items
+        ],
+        createdAt=record.created_at,
+        updatedAt=record.updated_at,
+    )
+
+
+def get_experience_or_404(session: Session, experience_id: UUID) -> Experience:
+    record = session.get(Experience, experience_id)
+    if record is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Experience not found.",
+        )
+    return record
+
+
+@app.get("/experiences", response_model=list[ExperienceRead], tags=["Experiences"])
+def list_experiences(
+    session: Session = Depends(get_database_session),
+) -> list[ExperienceRead]:
+    records = session.scalars(
+        select(Experience).order_by(Experience.start_date.desc(), Experience.id)
+    ).all()
+    return [experience_to_response(record) for record in records]
+
+
+@app.post(
+    "/experiences", response_model=ExperienceRead,
+    status_code=status.HTTP_201_CREATED, tags=["Experiences"],
+)
+def create_experience(
+    payload: ExperienceWrite,
+    session: Session = Depends(get_database_session),
+) -> ExperienceRead:
+    record = Experience(
+        organization=payload.organization,
+        title=payload.title,
+        employment_type=payload.employmentType,
+        location=payload.location,
+        start_date=payload.startDate,
+        end_date=payload.endDate,
+        description=payload.description,
+        highlights=payload.highlights,
+    )
+    session.add(record)
+    session.commit()
+    session.refresh(record)
+    return experience_to_response(record)
+
+
+@app.get("/experiences/{experience_id}", response_model=ExperienceRead, tags=["Experiences"])
+def get_experience(
+    experience_id: UUID,
+    session: Session = Depends(get_database_session),
+) -> ExperienceRead:
+    return experience_to_response(get_experience_or_404(session, experience_id))
+
+
+@app.put("/experiences/{experience_id}", response_model=ExperienceRead, tags=["Experiences"])
+def update_experience(
+    experience_id: UUID,
+    payload: ExperienceWrite,
+    session: Session = Depends(get_database_session),
+) -> ExperienceRead:
+    record = get_experience_or_404(session, experience_id)
+    record.organization = payload.organization
+    record.title = payload.title
+    record.employment_type = payload.employmentType
+    record.location = payload.location
+    record.start_date = payload.startDate
+    record.end_date = payload.endDate
+    record.description = payload.description
+    record.highlights = payload.highlights
+    session.commit()
+    session.refresh(record)
+    return experience_to_response(record)
+
+
+@app.delete(
+    "/experiences/{experience_id}", status_code=status.HTTP_204_NO_CONTENT,
+    tags=["Experiences"],
+)
+def delete_experience(
+    experience_id: UUID,
+    session: Session = Depends(get_database_session),
+) -> Response:
+    session.delete(get_experience_or_404(session, experience_id))
+    session.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@app.post(
+    "/experiences/{experience_id}/projects/{project_id}",
+    response_model=ExperienceRead, tags=["Experiences"],
+)
+def attach_experience_project(
+    experience_id: UUID,
+    project_id: UUID,
+    session: Session = Depends(get_database_session),
+) -> ExperienceRead:
+    record = get_experience_or_404(session, experience_id)
+    project = get_project_or_404(session, project_id)
+    if project not in record.projects:
+        record.projects.append(project)
+        session.commit()
+        session.refresh(record)
+    return experience_to_response(record)
+
+
+@app.delete(
+    "/experiences/{experience_id}/projects/{project_id}",
+    response_model=ExperienceRead, tags=["Experiences"],
+)
+def detach_experience_project(
+    experience_id: UUID,
+    project_id: UUID,
+    session: Session = Depends(get_database_session),
+) -> ExperienceRead:
+    record = get_experience_or_404(session, experience_id)
+    project = session.get(Project, project_id)
+    if project is None or project not in record.projects:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Project is not linked to this experience.",
+        )
+    record.projects.remove(project)
+    session.commit()
+    session.refresh(record)
+    return experience_to_response(record)
+
+
+@app.post(
+    "/experiences/{experience_id}/evidence/{evidence_id}",
+    response_model=ExperienceRead, tags=["Experiences"],
+)
+def attach_experience_evidence(
+    experience_id: UUID,
+    evidence_id: UUID,
+    session: Session = Depends(get_database_session),
+) -> ExperienceRead:
+    record = get_experience_or_404(session, experience_id)
+    evidence = session.get(Evidence, evidence_id)
+    if evidence is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Evidence record not found.",
+        )
+    if evidence not in record.evidence_items:
+        record.evidence_items.append(evidence)
+        session.commit()
+        session.refresh(record)
+    return experience_to_response(record)
+
+
+@app.delete(
+    "/experiences/{experience_id}/evidence/{evidence_id}",
+    response_model=ExperienceRead, tags=["Experiences"],
+)
+def detach_experience_evidence(
+    experience_id: UUID,
+    evidence_id: UUID,
+    session: Session = Depends(get_database_session),
+) -> ExperienceRead:
+    record = get_experience_or_404(session, experience_id)
+    evidence = session.get(Evidence, evidence_id)
+    if evidence is None or evidence not in record.evidence_items:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Evidence is not linked to this experience.",
+        )
+    record.evidence_items.remove(evidence)
+    session.commit()
+    session.refresh(record)
+    return experience_to_response(record)

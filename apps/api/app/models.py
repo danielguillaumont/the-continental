@@ -5,6 +5,8 @@ from sqlalchemy import (
     Column,
     Date,
     DateTime,
+    JSON,
+    CheckConstraint,
     ForeignKey,
     String,
     Table,
@@ -53,6 +55,33 @@ project_evidence = Table(
 )
 
 
+experience_projects = Table(
+    "experience_projects",
+    Base.metadata,
+    Column(
+        "experience_id", PGUUID(as_uuid=True),
+        ForeignKey("experiences.id", ondelete="CASCADE"), primary_key=True,
+    ),
+    Column(
+        "project_id", PGUUID(as_uuid=True),
+        ForeignKey("projects.id", ondelete="CASCADE"), primary_key=True,
+    ),
+)
+
+experience_evidence = Table(
+    "experience_evidence",
+    Base.metadata,
+    Column(
+        "experience_id", PGUUID(as_uuid=True),
+        ForeignKey("experiences.id", ondelete="CASCADE"), primary_key=True,
+    ),
+    Column(
+        "evidence_id", PGUUID(as_uuid=True),
+        ForeignKey("evidence.id", ondelete="CASCADE"), primary_key=True,
+    ),
+)
+
+
 class Project(Base):
     __tablename__ = "projects"
 
@@ -76,6 +105,10 @@ class Project(Base):
         back_populates="projects",
         lazy="selectin",
         order_by="Evidence.created_at",
+    )
+
+    experiences: Mapped[list["Experience"]] = relationship(
+        secondary=experience_projects, back_populates="projects",
     )
 
 
@@ -173,4 +206,48 @@ class Evidence(Base):
     projects: Mapped[list[Project]] = relationship(
         secondary=project_evidence,
         back_populates="evidence_items",
+    )
+
+    experiences: Mapped[list["Experience"]] = relationship(
+        secondary=experience_evidence, back_populates="evidence_items",
+    )
+
+
+class Experience(Base):
+    """An employment/engagement record, independent of supporting evidence."""
+
+    __tablename__ = "experiences"
+    __table_args__ = (
+        CheckConstraint(
+            "end_date IS NULL OR start_date <= end_date",
+            name="ck_experiences_date_order",
+        ),
+    )
+
+    id: Mapped[UUID] = mapped_column(
+        PGUUID(as_uuid=True), primary_key=True, default=uuid4,
+    )
+    organization: Mapped[str] = mapped_column(String(160), nullable=False)
+    title: Mapped[str] = mapped_column(String(160), nullable=False)
+    employment_type: Mapped[str | None] = mapped_column(String(24), nullable=True)
+    location: Mapped[str | None] = mapped_column(String(160), nullable=True)
+    start_date: Mapped[date] = mapped_column(Date, nullable=False)
+    end_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    description: Mapped[str] = mapped_column(Text, nullable=False)
+    highlights: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now(),
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False,
+        server_default=func.now(), onupdate=func.now(),
+    )
+
+    projects: Mapped[list[Project]] = relationship(
+        secondary=experience_projects, back_populates="experiences", lazy="selectin",
+        order_by="Project.created_at",
+    )
+    evidence_items: Mapped[list[Evidence]] = relationship(
+        secondary=experience_evidence, back_populates="experiences", lazy="selectin",
+        order_by="Evidence.created_at",
     )
