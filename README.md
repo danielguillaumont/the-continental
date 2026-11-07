@@ -8,11 +8,42 @@ The Continental is a career intelligence platform that turns projects, experienc
 
 ---
 
+<!-- continental-portfolio:begin -->
+## See it in action
+
+The Continental turns career evidence into structured, inspectable records. These screenshots are from the **v0.1.0 Career Record Foundation** running locally.
+
+### Overview workspace
+
+[![The Continental Overview workspace](docs/screenshots/overview-desktop.png)](docs/screenshots/overview-desktop.png)
+
+### Evidence library
+
+[![The Continental Evidence library](docs/screenshots/armory-desktop.png)](docs/screenshots/armory-desktop.png)
+
+Evidence records can be reused across projects, experiences, certifications and skills without duplicating the originals. Verification labels are owner-entered, not independent assessments.
+
+### What v0.1.0 delivers
+
+- **Profile:** persistent professional identity, career direction and portfolio links.
+- **Experience:** employment, engagements, accomplishments, linked projects and evidence.
+- **Projects:** structured project records with attach/detach evidence workflows.
+- **Evidence:** searchable records with sources, verification labels and skills.
+- **Skills:** an evidence-derived inventory with inspectable supporting records.
+- **Certifications:** credential metadata, date-aware status, linked skills and evidence.
+
+**Engineering:** FastAPI, PostgreSQL, SQLAlchemy, Alembic, Next.js, React, TypeScript, regression tests, and GitHub Actions CI. Release checks included **38 backend tests and 51 frontend tests**, plus ESLint, a production build, and a production-dependency audit.
+
+**Release:** [v0.1.0 - Career Record Foundation](https://github.com/danielguillaumont/the-continental/releases/tag/v0.1.0) | **Next:** v0.2 Dossier - structured opportunity records from supplied job-posting text.
+
+> **Scope:** local, unauthenticated, single-user development milestone. Not publicly hosted; no login, tenant isolation, AI matching or independent credential verification. Do not publicly deploy this API or database with personal data.
+<!-- continental-portfolio:end -->
+
 ## Current Status
 
 **v0.1.0 — My Evidence (release candidate; not tagged yet).**
 
-The first career-record foundation is implemented: Profile, Experience, Projects, Evidence, Skills, and Certifications are backed by persistent models and working UI. Records can be linked without duplicating the originals. The next step is release readiness, not new functionality. This repository is still a local-only development application, not a hosted service.
+The first career-record foundation is implemented: Profile, Experience, Projects, Evidence, Skills, and Certifications are backed by persistent models and working UI. Records can be linked without duplicating the originals. The next milestone is v0.2 â€” Dossier, starting with structured job opportunity records. This repository is still a local-only development application, not a hosted service.
 
 ### Working
 
@@ -47,11 +78,11 @@ The first career-record foundation is implemented: Profile, Experience, Projects
 - API integration tests for project lifecycle and relationship integrity
 - Structured Experience API, PostgreSQL model, additive migration, and responsive Experience workspace (list, create, edit, detail, delete, project/evidence associations)
 
-### Release readiness
+### v0.1.0 release validation
 
 - Local acceptance on November 7, 2026: **38 backend tests and 51 frontend tests passed**; ESLint, the Next.js production build and a production-only npm audit passed (0 reported vulnerabilities).
 - Database at Alembic revision `b7c2e49a1d03`, with existing records preserved through the Profile migration. These are **local checks**, not a claim of production readiness.
-- GitHub Actions CI and a final clean-checkout review are the remaining release gates. See [`docs/releases/v0.1.0-rc.md`](docs/releases/v0.1.0-rc.md).
+- Both GitHub Actions CI jobs passed on the v0.1.0 release commit. See [`docs/releases/v0.1.0-rc.md`](docs/releases/v0.1.0-rc.md).
 - Screenshots must use sanitized demonstration records. Do not publish actual profile or career data.
 
 ---
@@ -78,6 +109,7 @@ Future AI features will operate on this evidence instead of inventing it.
 | Area | Purpose |
 | --- | --- |
 | **Overview** | Home workspace and next actions |
+| **Profile** | Professional identity, career direction and portfolio links |
 | **Experience** | Roles, organizations, accomplishments, and supporting work |
 | **Projects** | Project records grouped with supporting evidence |
 | **Evidence** | Reusable records supporting projects, skills and experience |
