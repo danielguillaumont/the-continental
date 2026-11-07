@@ -1,3 +1,4 @@
+import type { CertificationRecord, CertificationWritePayload } from "@/types/certification";
 import type { SkillDetail, SkillSummary } from "@/types/skill";
 import type { ExperienceRecord, ExperienceWritePayload } from "@/types/experience";
 import type { ProjectRecord, ProjectWritePayload } from "@/types/project";
@@ -231,4 +232,53 @@ export async function getSkill(id: string): Promise<SkillDetail> {
   const response = await fetch(`${API_BASE_URL}/skills/${encodeURIComponent(id)}`, { cache: "no-store" });
   if (!response.ok) throw new Error(await getErrorMessage(response));
   return response.json();
+}
+
+// Certifications are independent owner-entered records. Relationships never transfer ownership.
+async function readCertification(response: Response): Promise<CertificationRecord> {
+  if (!response.ok) throw new Error(await getErrorMessage(response));
+  return response.json();
+}
+
+export async function listCertifications(): Promise<CertificationRecord[]> {
+  const response = await fetch(`${API_BASE_URL}/certifications`, { cache: "no-store" });
+  if (!response.ok) throw new Error(await getErrorMessage(response));
+  return response.json();
+}
+
+export async function getCertification(id: string): Promise<CertificationRecord> {
+  return readCertification(await fetch(`${API_BASE_URL}/certifications/${encodeURIComponent(id)}`, { cache: "no-store" }));
+}
+
+export async function createCertification(payload: CertificationWritePayload): Promise<CertificationRecord> {
+  return readCertification(await fetch(`${API_BASE_URL}/certifications`, {
+    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
+  }));
+}
+
+export async function updateCertification(id: string, payload: CertificationWritePayload): Promise<CertificationRecord> {
+  return readCertification(await fetch(`${API_BASE_URL}/certifications/${encodeURIComponent(id)}`, {
+    method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
+  }));
+}
+
+export async function deleteCertification(id: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/certifications/${encodeURIComponent(id)}`, { method: "DELETE" });
+  if (!response.ok) throw new Error(await getErrorMessage(response));
+}
+
+export async function attachCertificationSkill(id: string, skillId: string): Promise<CertificationRecord> {
+  return readCertification(await fetch(`${API_BASE_URL}/certifications/${encodeURIComponent(id)}/skills/${encodeURIComponent(skillId)}`, { method: "POST" }));
+}
+
+export async function detachCertificationSkill(id: string, skillId: string): Promise<CertificationRecord> {
+  return readCertification(await fetch(`${API_BASE_URL}/certifications/${encodeURIComponent(id)}/skills/${encodeURIComponent(skillId)}`, { method: "DELETE" }));
+}
+
+export async function attachCertificationEvidence(id: string, evidenceId: string): Promise<CertificationRecord> {
+  return readCertification(await fetch(`${API_BASE_URL}/certifications/${encodeURIComponent(id)}/evidence/${encodeURIComponent(evidenceId)}`, { method: "POST" }));
+}
+
+export async function detachCertificationEvidence(id: string, evidenceId: string): Promise<CertificationRecord> {
+  return readCertification(await fetch(`${API_BASE_URL}/certifications/${encodeURIComponent(id)}/evidence/${encodeURIComponent(evidenceId)}`, { method: "DELETE" }));
 }

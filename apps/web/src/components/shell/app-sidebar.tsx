@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BriefcaseBusiness, FolderKanban, LayoutDashboard, LibraryBig, Tags, type LucideIcon } from "lucide-react";
+import { Award, BriefcaseBusiness, FolderKanban, LayoutDashboard, LibraryBig, Tags, type LucideIcon } from "lucide-react";
 
 import { BrandMark } from "@/components/shell/brand-mark";
 import { activeDestination, destinations, type Destination } from "@/lib/primary-navigation";
@@ -54,6 +54,7 @@ export function SidebarNavigation({ onNavigate }: { onNavigate?: () => void }) {
         <SidebarItem icon={FolderKanban} destination="projects" active={active === "projects"} onSelect={onNavigate} />
         <SidebarItem icon={LibraryBig} destination="evidence" active={active === "evidence"} onSelect={onNavigate} />
         <SidebarItem icon={Tags} destination="skills" active={active === "skills"} onSelect={onNavigate} />
+        <SidebarItem icon={Award} destination="certifications" active={active === "certifications"} onSelect={onNavigate} />
       </div>
       <p className="mt-5 border-t border-border-subtle px-3 pt-4 text-[11px] leading-5 text-text-muted">
         Roles and projects describe your work. Evidence backs your skills with inspectable proof.
