@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FolderKanban, LayoutDashboard, LibraryBig, type LucideIcon } from "lucide-react";
+import { BriefcaseBusiness, FolderKanban, LayoutDashboard, LibraryBig, type LucideIcon } from "lucide-react";
 
 import { BrandMark } from "@/components/shell/brand-mark";
 import { activeDestination, destinations, type Destination } from "@/lib/primary-navigation";
@@ -50,11 +50,12 @@ export function SidebarNavigation({ onNavigate }: { onNavigate?: () => void }) {
       <SidebarItem icon={LayoutDashboard} destination="overview" active={active === "overview"} onSelect={onNavigate} />
       <p className="mb-2 mt-6 px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-text-muted">Your career record</p>
       <div className="space-y-1">
+        <SidebarItem icon={BriefcaseBusiness} destination="experiences" active={active === "experiences"} onSelect={onNavigate} />
         <SidebarItem icon={FolderKanban} destination="projects" active={active === "projects"} onSelect={onNavigate} />
         <SidebarItem icon={LibraryBig} destination="evidence" active={active === "evidence"} onSelect={onNavigate} />
       </div>
       <p className="mt-5 border-t border-border-subtle px-3 pt-4 text-[11px] leading-5 text-text-muted">
-        Projects describe the work. Evidence is the reusable proof behind it.
+        Experience tracks the roles. Projects show what you built. Evidence is the reusable proof.
       </p>
     </nav>
   );
@@ -68,7 +69,7 @@ export function AppSidebar() {
       <div className="border-t border-border-subtle px-5 py-4">
         <div className="flex items-center gap-2 text-[11px] text-text-muted">
           <span className="size-1.5 rounded-full bg-success" />
-          <span>v0.1 · Evidence foundation</span>
+          <span>v0.1 · Career record foundation</span>
         </div>
       </div>
     </aside>

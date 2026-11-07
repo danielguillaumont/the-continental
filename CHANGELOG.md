@@ -2,6 +2,8 @@
 
 ## Unreleased — v0.1 My Evidence
 
+- Added Experience Registry Slice 1B: dedicated Experience navigation, responsive list/detail and create/edit forms, accomplishments, project/evidence linking, deletion safeguards, and frontend regression checks. No backend or schema changes.
+
 - Added Experience Registry backend foundation: dated roles, employer details, highlights, independent project/evidence links, API CRUD, migration and disposable integration tests. Experience frontend is a subsequent slice.
 
 - Added UX Foundation Slice 3B2: project-aware evidence creation, automatic attachment/return, explicit partial-failure recovery and workflow tests; no backend/schema changes.
