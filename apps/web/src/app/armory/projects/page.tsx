@@ -1,161 +1,102 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState, type FormEvent } from "react";
-import { AlertCircle, ArrowLeft, ExternalLink, FolderKanban, Link2, Pencil, Plus, RefreshCw, Trash2, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { ArrowUpRight, FolderKanban, Plus, RefreshCw, ShieldCheck } from "lucide-react";
+
+import { ProjectForm } from "@/components/projects/project-form";
 import { AppShell } from "@/components/shell/app-shell";
-import { attachProjectEvidence, createProject, deleteProject, detachProjectEvidence, listEvidence, listProjects, updateProject } from "@/lib/api";
-import type { EvidenceRecord } from "@/types/evidence";
-import type { ProjectRecord, ProjectStatus, ProjectWritePayload } from "@/types/project";
+import { listProjects } from "@/lib/api";
+import { projectDetailsUrl, projectProofState, projectStatusLabel, proofCountLabel } from "@/lib/project-workspace";
+import type { ProjectRecord } from "@/types/project";
 
-type Draft = { name: string; summary: string; repositoryUrl: string; status: ProjectStatus };
-const newDraft: Draft = { name: "", summary: "", repositoryUrl: "", status: "active" };
-const field = "mt-2 w-full rounded-md border border-border bg-surface-raised px-3 py-2.5 text-[13px] text-text-primary outline-none placeholder:text-text-disabled focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/30";
-const label = "block text-[11px] font-semibold uppercase tracking-[0.1em] text-text-muted";
-const smallButton = "inline-flex min-h-9 items-center gap-2 rounded-md border border-border bg-surface-raised px-3 text-[12px] font-semibold text-text-secondary hover:bg-surface-hover hover:text-text-primary focus-visible:outline-2 focus-visible:outline-gold disabled:cursor-not-allowed disabled:opacity-50";
-
-function describe(error: unknown) { return error instanceof Error ? error.message : "Unexpected request error."; }
-function isHttpUrl(value: string) { try { const u = new URL(value); return u.protocol === "https:" || u.protocol === "http:"; } catch { return false; } }
+const outlineButton = "inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-border bg-surface-raised px-4 text-[13px] font-semibold text-text-secondary hover:border-border-strong hover:bg-surface-hover hover:text-text-primary disabled:opacity-50";
 
 export default function ProjectsPage() {
+  const router = useRouter();
   const [projects, setProjects] = useState<ProjectRecord[]>([]);
-  const [evidence, setEvidence] = useState<EvidenceRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
-  const [formOpen, setFormOpen] = useState(false);
-  const [draft, setDraft] = useState<Draft>({ ...newDraft });
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [saving, setSaving] = useState(false);
-  const [busyId, setBusyId] = useState<string | null>(null);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [selection, setSelection] = useState<Record<string, string>>({});
+  const [creating, setCreating] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    try {
-      const [p, e] = await Promise.all([listProjects(), listEvidence()]);
-      setProjects(p); setEvidence(e); setError(null);
-    } catch (cause) { setError(describe(cause)); }
-    finally { setLoading(false); }
-  }, []);
   useEffect(() => {
     let active = true;
-    void Promise.all([listProjects(), listEvidence()])
-      .then(([loadedProjects, loadedEvidence]) => {
-        if (!active) return;
-        setProjects(loadedProjects);
-        setEvidence(loadedEvidence);
-        setError(null);
-      })
-      .catch((cause: unknown) => {
-        if (active) setError(describe(cause));
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
+    void listProjects()
+      .then((records) => { if (active) { setProjects(records); setError(null); } })
+      .catch((cause: unknown) => { if (active) setError(cause instanceof Error ? cause.message : "Could not load projects."); })
+      .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
   }, []);
 
-  function newProject() { setEditingId(null); setDraft({ ...newDraft }); setFormOpen(true); setError(null); }
-  function editProject(project: ProjectRecord) {
-    setEditingId(project.id);
-    setDraft({ name: project.name, summary: project.summary, repositoryUrl: project.repositoryUrl ?? "", status: project.status });
-    setFormOpen(true); setError(null);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-  async function save(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const payload: ProjectWritePayload = { name: draft.name.trim(), summary: draft.summary.trim(), repositoryUrl: draft.repositoryUrl.trim() || null, status: draft.status };
-    if (payload.name.length < 3 || payload.summary.length < 10) { setError("Enter a name of at least 3 characters and a summary of at least 10."); return; }
-    if (payload.repositoryUrl && !isHttpUrl(payload.repositoryUrl)) { setError("Repository URL must be an http:// or https:// address."); return; }
-    setSaving(true); setError(null); setNotice(null);
+  async function refresh() {
+    setRefreshing(true);
     try {
-      if (editingId) await updateProject(editingId, payload);
-      else await createProject(payload);
-      setNotice(editingId ? "Project updated." : "Project created. Now link supporting evidence.");
-      setEditingId(null); setFormOpen(false);
-      await load();
-    } catch (cause) { setError(describe(cause)); }
-    finally { setSaving(false); }
+      const records = await listProjects();
+      setProjects(records);
+      setError(null);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not refresh projects.");
+    } finally { setRefreshing(false); }
   }
-  async function remove(project: ProjectRecord) {
-    setBusyId(project.id); setError(null); setNotice(null);
-    try {
-      await deleteProject(project.id);
-      setDeletingId(null); setNotice(`Deleted ${project.name}; all evidence records were preserved.`);
-      await load();
-    } catch (cause) { setError(describe(cause)); }
-    finally { setBusyId(null); }
-  }
-  async function setLink(projectId: string, evidenceId: string, detach: boolean) {
-    if (!evidenceId) return;
-    setBusyId(projectId); setError(null); setNotice(null);
-    try {
-      if (detach) await detachProjectEvidence(projectId, evidenceId);
-      else await attachProjectEvidence(projectId, evidenceId);
-      setSelection((old) => ({ ...old, [projectId]: "" }));
-      setNotice(detach ? "Link removed; evidence remains in your Evidence library." : "Evidence linked to the project.");
-      await load();
-    } catch (cause) { setError(describe(cause)); }
-    finally { setBusyId(null); }
-  }
+
+  const supported = projects.filter((project) => projectProofState(project) === "supported").length;
 
   return (
     <AppShell sectionLabel="Projects">
-      <div className="mx-auto w-full max-w-[1120px] px-4 py-7 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
-        <Link href="/armory" className="inline-flex items-center gap-2 text-[12px] text-text-secondary hover:text-text-primary"><ArrowLeft aria-hidden="true" className="size-4" />Browse evidence instead</Link>
-        <header className="mt-6 flex flex-wrap items-end justify-between gap-4 border-b border-border-subtle pb-6">
-          <div className="max-w-2xl">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-gold">PROJECT WORKSPACE</p>
-            <h1 className="mt-2 text-[24px] font-semibold tracking-tight text-text-primary">Projects you can stand behind.</h1>
-            <p className="mt-2 text-[13px] leading-6 text-text-secondary">Create a project for the work you built, then attach reusable proof from your Evidence library. One project can be backed by many records.</p>
+      <div className="mx-auto w-full max-w-[1160px] px-4 py-7 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
+        <header className="flex flex-wrap items-start justify-between gap-5 border-b border-border-subtle pb-7">
+          <div className="max-w-[650px]">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-gold">Your career record / Projects</p>
+            <h1 className="mt-2 text-[28px] font-semibold leading-tight tracking-tight text-text-primary sm:text-[32px]">Your work, in one place.</h1>
+            <p className="mt-3 text-[14px] leading-6 text-text-secondary">Projects describe what you built. Open a project to manage its details and connect the evidence that proves your work.</p>
           </div>
-          <button type="button" onClick={newProject} className="inline-flex h-10 items-center gap-2 rounded-md bg-gold px-4 text-[13px] font-semibold text-text-inverse hover:bg-gold-hover focus-visible:outline-2 focus-visible:outline-gold"><Plus className="size-4" aria-hidden="true"/>New project</button>
+          <button type="button" onClick={() => setCreating(true)} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-gold px-5 text-[13px] font-semibold text-text-inverse hover:bg-gold-hover"><Plus className="size-4" aria-hidden="true" />New project</button>
         </header>
 
-        <section aria-label="How projects work" className="mt-5 rounded-lg border border-border bg-surface px-4 py-4 sm:px-5">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-gold">How it works</p>
-          <ol className="mt-3 grid gap-3 text-[12px] leading-5 text-text-secondary sm:grid-cols-3">
-            <li><span className="mr-2 font-technical text-gold">01</span><strong className="text-text-primary">Create a project</strong><span className="mt-1 block">Describe the actual work and its status.</span></li>
-            <li><span className="mr-2 font-technical text-gold">02</span><strong className="text-text-primary">Gather evidence</strong><span className="mt-1 block">Use saved records or create new proof in the Evidence library.</span></li>
-            <li><span className="mr-2 font-technical text-gold">03</span><strong className="text-text-primary">Link the proof</strong><span className="mt-1 block">Choose an evidence record under your project, then select Attach evidence.</span></li>
-          </ol>
-        </section>
+        {creating && <div className="mt-6"><ProjectForm onCancel={() => setCreating(false)} onSaved={(project) => router.push(projectDetailsUrl(project.id))} /></div>}
 
-        {error && <div role="alert" className="mt-5 flex items-start gap-2 rounded-lg border border-danger-border bg-danger-surface p-4 text-[13px] text-danger-text"><AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />{error}</div>}
-        {notice && <div role="status" className="mt-5 rounded-lg border border-success-border bg-success-surface p-4 text-[13px] text-success-text">{notice}</div>}
+        {error && <div role="alert" className="mt-6 rounded-md border border-danger-border bg-danger-surface p-4 text-[13px] text-danger-text">{error} <button onClick={() => void refresh()} className="ml-2 font-semibold underline">Retry</button></div>}
 
-        {formOpen && <section aria-label={editingId ? "Edit project" : "Create project"} className="mt-6 rounded-lg border border-gold/50 bg-surface p-5 sm:p-6">
-          <div className="flex items-center justify-between gap-3"><h2 className="text-[16px] font-semibold text-text-primary">{editingId ? "Edit project" : "Create project"}</h2><button type="button" aria-label="Close project form" disabled={saving} onClick={() => setFormOpen(false)} className={smallButton}><X aria-hidden="true" className="size-4" /></button></div>
-          <form onSubmit={(event) => void save(event)} className="mt-5 grid gap-4">
-            <label className={label}>Project name<input className={field} required minLength={3} maxLength={160} value={draft.name} onChange={(event) => setDraft({ ...draft, name: event.target.value })} placeholder="Security configuration analyzer" /></label>
-            <label className={label}>What did you build?<textarea className={field} required minLength={10} maxLength={2000} rows={3} value={draft.summary} onChange={(event) => setDraft({ ...draft, summary: event.target.value })} placeholder="Describe the actual engineering work, without unsupported claims." /></label>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <label className={label}>Repository URL (optional)<input className={field} type="url" value={draft.repositoryUrl} onChange={(event) => setDraft({ ...draft, repositoryUrl: event.target.value })} placeholder="https://github.com/..." /></label>
-              <label className={label}>Project status<select className={field} value={draft.status} onChange={(event) => setDraft({ ...draft, status: event.target.value as ProjectStatus })}><option value="active">Active</option><option value="completed">Completed</option><option value="paused">Paused</option></select></label>
-            </div>
-            <div className="flex flex-wrap gap-3 pt-1"><button disabled={saving} type="submit" className="min-h-10 rounded-md bg-gold px-4 text-[13px] font-semibold text-text-inverse hover:bg-gold-hover disabled:opacity-50">{saving ? "Saving…" : editingId ? "Save changes" : "Create project"}</button><button type="button" disabled={saving} onClick={() => setFormOpen(false)} className={smallButton}>Cancel</button></div>
-          </form>
+        {!loading && !error && <section aria-label="Project summary" className="mt-6 grid gap-3 sm:grid-cols-3">
+          <div className="rounded-lg border border-border bg-surface p-5"><p className="text-[12px] text-text-secondary">Projects saved</p><p className="mt-1 text-[28px] font-semibold text-text-primary">{projects.length}</p></div>
+          <div className="rounded-lg border border-border bg-surface p-5"><p className="text-[12px] text-text-secondary">With supporting proof</p><p className="mt-1 text-[28px] font-semibold text-text-primary">{supported}</p></div>
+          <div className="rounded-lg border border-border bg-surface p-5"><p className="text-[12px] text-text-secondary">Waiting for proof</p><p className="mt-1 text-[28px] font-semibold text-text-primary">{projects.length - supported}</p></div>
         </section>}
 
-        <section aria-labelledby="registry-title" className="mt-7">
-          <div className="mb-4 flex items-center justify-between gap-3"><div><h2 id="registry-title" className="text-[15px] font-semibold text-text-primary">Project registry</h2><p className="mt-1 text-[12px] text-text-muted">{loading ? "Loading…" : `${projects.length} projects · ${evidence.length} evidence records available`}</p></div><button type="button" disabled={loading} onClick={() => void load()} className={smallButton}><RefreshCw aria-hidden="true" className="size-4"/>Refresh</button></div>
-          {loading ? <div role="status" className="rounded-lg border border-border bg-surface p-6 text-[13px] text-text-muted">Loading projects…</div> : error && projects.length === 0 ? <div className="rounded-lg border border-danger-border bg-danger-surface p-6 text-[13px] text-danger-text">Cannot load the registry. Check the API and retry.</div> : projects.length === 0 ? <div className="rounded-lg border border-border bg-surface p-8 text-center"><FolderKanban aria-hidden="true" className="mx-auto size-7 text-gold"/><h3 className="mt-3 text-[15px] font-semibold text-text-primary">No projects yet</h3><p className="mx-auto mt-2 max-w-md text-[13px] leading-6 text-text-secondary">Create your first project, then link proof from the Evidence library.</p><button onClick={newProject} type="button" className="mt-4 text-[13px] font-semibold text-gold hover:text-gold-hover">Create your first project</button></div> :
-            <div className="grid gap-4">{projects.map((project) => {
-              const linked = new Set(project.evidence.map((item) => item.id));
-              const available = evidence.filter((item) => !linked.has(item.id));
-              const busy = busyId === project.id;
-              return <article key={project.id} className="rounded-lg border border-border bg-surface p-5 sm:p-6">
-                <div className="flex flex-wrap items-start justify-between gap-3"><div className="min-w-0 flex-1"><div className="flex flex-wrap items-center gap-2"><h3 className="break-words text-[16px] font-semibold text-text-primary">{project.name}</h3><span className="rounded border border-border-strong bg-surface-raised px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-text-secondary">{project.status}</span></div><p className="mt-2 whitespace-pre-wrap break-words text-[13px] leading-6 text-text-secondary">{project.summary}</p>{project.repositoryUrl && <a href={project.repositoryUrl} rel="noopener noreferrer" target="_blank" className="mt-2 inline-flex items-center gap-1 text-[12px] font-medium text-gold hover:text-gold-hover"><ExternalLink aria-hidden="true" className="size-3.5"/>Repository</a>}</div><div className="flex flex-wrap gap-2"><button type="button" disabled={busy} onClick={() => editProject(project)} className={smallButton}><Pencil aria-hidden="true" className="size-3.5"/>Edit</button><button type="button" disabled={busy} onClick={() => setDeletingId(project.id)} className={smallButton}><Trash2 aria-hidden="true" className="size-3.5"/>Delete</button></div></div>
-                {deletingId === project.id && <div className="mt-4 rounded-md border border-danger-border bg-danger-surface p-4 text-[12px] text-text-secondary"><p className="font-semibold text-danger-text">Delete {project.name}?</p><p className="mt-1">This removes only the project and its links. Evidence remains saved.</p><div className="mt-3 flex flex-wrap gap-2"><button type="button" disabled={busy} onClick={() => void remove(project)} className="rounded-md bg-danger px-3 py-2 font-semibold text-white disabled:opacity-50">{busy ? "Deleting…" : "Confirm delete"}</button><button type="button" disabled={busy} onClick={() => setDeletingId(null)} className={smallButton}>Cancel</button></div></div>}
-                <div className="mt-5 border-t border-border-subtle pt-4"><div className="flex items-center justify-between gap-2"><h4 className="text-[12px] font-semibold text-text-primary">Supporting evidence</h4><span className="text-[11px] text-text-muted">{project.evidence.length} linked</span></div>
-                  {project.evidence.length === 0 ? <p className="mt-3 text-[12px] text-text-muted">No evidence yet. A project name is not proof on its own.</p> : <ul className="mt-3 space-y-2">{project.evidence.map((item) => <li key={item.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border-subtle bg-surface-raised px-3 py-2"><Link href={`/armory/${item.id}`} className="min-w-0 break-words text-[12px] font-medium text-text-primary hover:text-gold">{item.title}<span className="ml-1 text-[11px] font-normal text-text-muted">· {item.kind} · {item.status}</span></Link><button type="button" disabled={busy} onClick={() => void setLink(project.id, item.id, true)} aria-label={`Detach ${item.title} from ${project.name}`} className="text-[11px] font-semibold text-text-muted hover:text-danger-text disabled:opacity-50">Detach</button></li>)}</ul>}
-                  <div className="mt-4 flex flex-wrap items-end gap-3"><label className="min-w-0 basis-full flex-1 text-[11px] sm:basis-auto font-semibold uppercase tracking-wide text-text-muted">Attach existing evidence<select className={field} disabled={busy || !available.length} value={selection[project.id] ?? ""} onChange={(event) => setSelection((previous) => ({ ...previous, [project.id]: event.target.value }))}><option value="">{available.length ? "Choose evidence…" : "No unlinked evidence"}</option>{available.map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}</select></label><button type="button" disabled={busy || !selection[project.id]} onClick={() => void setLink(project.id, selection[project.id], false)} className={smallButton}><Link2 aria-hidden="true" className="size-3.5"/>Attach evidence</button><Link href="/armory/new" className="text-[12px] font-semibold text-gold hover:text-gold-hover">Add new evidence</Link></div>
-                </div>
-              </article>;
-            })}</div>}
+        <section aria-labelledby="projects-list-heading" className="mt-8">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 id="projects-list-heading" className="text-[18px] font-semibold text-text-primary">All projects</h2>
+              <p className="mt-1 text-[13px] text-text-secondary">Select a project to view its evidence and make changes.</p>
+            </div>
+            <button className={outlineButton} disabled={loading || refreshing} type="button" onClick={() => void refresh()}><RefreshCw className={`size-4 ${refreshing ? "animate-spin" : ""}`} aria-hidden="true" />Refresh</button>
+          </div>
+
+          {loading ? <div role="status" className="mt-5 rounded-lg border border-border bg-surface p-7 text-[14px] text-text-secondary">Loading your projects…</div> : error ? null : projects.length === 0 ?
+            <div className="mt-5 rounded-xl border border-border bg-surface px-5 py-12 text-center">
+              <div className="mx-auto flex size-12 items-center justify-center rounded-xl border border-border bg-surface-raised text-gold"><FolderKanban className="size-6" aria-hidden="true" /></div>
+              <h3 className="mt-4 text-[19px] font-semibold text-text-primary">Start with a project you built.</h3>
+              <p className="mx-auto mt-2 max-w-lg text-[14px] leading-6 text-text-secondary">Add the name and a clear summary. You can attach supporting evidence once the project is saved.</p>
+              <button type="button" onClick={() => setCreating(true)} className="mt-5 inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-gold px-5 text-[13px] font-semibold text-text-inverse hover:bg-gold-hover"><Plus className="size-4" aria-hidden="true" />Create your first project</button>
+            </div>
+            : <div className="mt-5 grid gap-4 md:grid-cols-2">{projects.map((project) => (
+                <article key={project.id} className="flex min-w-0 flex-col rounded-xl border border-border bg-surface p-5 transition-colors hover:border-border-strong sm:p-6">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="rounded-md border border-border-strong bg-surface-raised px-2.5 py-1 text-[11px] font-semibold text-text-secondary">{projectStatusLabel(project.status)}</span>
+                    <span className={`inline-flex items-center gap-1.5 text-[12px] font-medium ${projectProofState(project) === "supported" ? "text-success-text" : "text-warning-text"}`}><ShieldCheck className="size-3.5" aria-hidden="true" />{projectProofState(project) === "supported" ? "Evidence attached" : "Needs supporting proof"}</span>
+                  </div>
+                  <h3 className="mt-4 break-words text-[19px] font-semibold leading-snug text-text-primary">{project.name}</h3>
+                  <p className="mt-2 line-clamp-3 flex-1 whitespace-pre-line break-words text-[14px] leading-6 text-text-secondary">{project.summary}</p>
+                  <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-border-subtle pt-4">
+                    <span className="text-[12px] text-text-muted">{proofCountLabel(project.evidence.length)}</span>
+                    <Link href={projectDetailsUrl(project.id)} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-gold/50 px-4 text-[13px] font-semibold text-gold hover:bg-gold-surface">Open project <ArrowUpRight className="size-4" aria-hidden="true" /></Link>
+                  </div>
+                </article>
+              ))}</div>}
         </section>
+        <p className="mt-8 text-[13px] text-text-muted">Looking for individual proof records? <Link href="/armory" className="font-semibold text-gold hover:underline">Browse the Evidence library</Link>.</p>
       </div>
     </AppShell>
   );

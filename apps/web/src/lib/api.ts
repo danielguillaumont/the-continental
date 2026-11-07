@@ -131,6 +131,10 @@ export async function listProjects(): Promise<ProjectRecord[]> {
   return response.json();
 }
 
+export async function getProject(id: string): Promise<ProjectRecord> {
+  return readProjectResponse(await fetch(`${API_BASE_URL}/projects/${encodeURIComponent(id)}`));
+}
+
 export async function createProject(payload: ProjectWritePayload): Promise<ProjectRecord> {
   return readProjectResponse(await fetch(`${API_BASE_URL}/projects`, {
     method: "POST", headers: { "Content-Type": "application/json" },

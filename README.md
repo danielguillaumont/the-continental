@@ -36,14 +36,14 @@ The Continental now has a working database-backed evidence system and a project 
 - Database-backed evidence summaries and skill counts
 - Evidence provenance and record history
 - Desktop and mobile navigation
-- Project registry: create, inspect, edit, and delete project records
+- Project workspace: dedicated detail pages, clearer project list, shared create/edit form, and safe deletion confirmation
 - Projects can link and unlink existing evidence (without deleting original evidence)
 - Project/evidence relational tables with additive Alembic migration
 - API integration tests for project lifecycle and relationship integrity
 
 ### Next
 
-- Complete UX Foundation visual/mobile QA and follow-up workflow refinements
+- Complete UX Foundation 3B mobile/visual QA and project-to-evidence create-and-return workflow
 - Experience and certification entities and relationships
 - Profile/skill evidence inspection and remaining v0.1 release validation
 - Screenshot review with sanitized demonstration data
@@ -137,9 +137,9 @@ API docs:
 http://127.0.0.1:8000/docs
 ```
 
-Run the API tests from `apps/api` with `python -m pytest tests/test_projects.py -q`, and web checks from `apps/web` with `npm run lint` and `npm run build`.
+Run the API tests from `apps/api` with `python -m pytest tests/test_projects.py -q`, and web checks from `apps/web` with `npm run test:navigation`, `npm run test:projects`, `npm run lint` and `npm run build`.
 
-Choose **Projects** in the main navigation to create project records and link evidence from **Evidence**. Routes `/armory` and `/armory/projects` remain unchanged for compatibility. Unlinking or deleting a project preserves the underlying evidence. This is still a single-user development application; user authentication and tenant separation are not yet implemented.
+Choose **Projects** in the main navigation to create project records, then open a project to view its dedicated workspace, edit details, and link saved proof from **Evidence**. Routes `/armory` and `/armory/projects` remain unchanged for compatibility; project details use `/armory/projects/[id]`. Unlinking or deleting a project preserves underlying evidence. Creating new evidence from within a project does not yet automatically attach it; the return-and-link workflow is planned for UX Foundation 3B2. This is still a single-user development application; user authentication and tenant separation are not yet implemented.
 
 ---
 
