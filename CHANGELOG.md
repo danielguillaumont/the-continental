@@ -1,6 +1,16 @@
 # Changelog
 
-## Unreleased — v0.1 My Evidence
+## Unreleased
+
+The next feature release is v0.2 — Dossier. No v0.2 functionality is included in this release candidate.
+
+## v0.1.0 — My Evidence (release candidate)
+
+- Completed the v0.1 career-record foundation across Profile, Experience, Projects, Evidence, Skills and Certifications, including reusable relationships and navigable proof.
+- Added a GitHub Actions workflow for backend regression, frontend tests, lint, production build, and production dependency audit.
+- Bound the development PostgreSQL published port to localhost instead of all interfaces to reduce accidental network exposure.
+- Local release validation (2026-11-07): 38 backend tests, 51 frontend tests, ESLint and Next.js production build passed; npm production audit reported 0 vulnerabilities. The local PostgreSQL schema matched revision `b7c2e49a1d03`.
+- Release notes and explicit local-only security limitations are documented in `docs/releases/v0.1.0-rc.md`.
 
 - Added Profile Management Slice 1B: responsive owner-entered professional identity workspace, local-only contact and portfolio links, profile API integration, target role validation, clear unconfigured/error/edit/success states, navigation and frontend regression coverage. No schema or backend changes.
 
@@ -28,4 +38,4 @@
 - Added disposable SQLite integration tests for project integrity and existing evidence CRUD.
 - Corrected mobile navigation's release label to v0.1.
 
-This is not a tagged v0.1.0 release: the remainder of the evidence/profile foundation is still in progress.
+This is a release candidate, not a tagged v0.1.0 release. Tag only after GitHub Actions and final release review pass.
