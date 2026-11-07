@@ -1,7 +1,11 @@
-# Screenshots
+# Public portfolio screenshots
 
-Use `scripts/zip-workflow/Capture-ContinentalScreenshots.ps1` to create repeatable localhost captures. Screenshots must contain **synthetic or explicitly sanitized demo evidence**, never private job-search data, resumes, emails, tokens, or other people's personal information.
+These screenshots were captured from The Continental v0.1.0 running locally at 1440x900. They are not a hosted demo.
 
-The capture script writes: `lobby-desktop.png`, `lobby-mobile.png`, `armory-desktop.png`, `armory-mobile.png`, and `capture-manifest.json` by default. Future routes can be added with `-Pages`.
+- `overview-desktop.png` - Overview workspace
+- `armory-desktop.png` - Evidence library
+- `capture-manifest.json` - Capture routes, commit, timestamps, SHA-256 checksums and manual public-sharing review flags
 
-Inspect at full size (especially 390px mobile) for clipped text, empty/error behavior, legible statuses, keyboard/focus cues, and evidence provenance. Only add reviewed images to the root README after the corresponding feature genuinely works. Do not treat screenshots as proof that backend tests passed.
+Before publishing, inspect each screenshot for personal data, sensitive details, misleading records and loading/error states. A manual public-sharing review does **not** establish that records are synthetic or independently verified. Source files are never copied from PostgreSQL into this directory.
+
+To recapture, use `scripts/zip-workflow/Capture-ContinentalPortfolioReady.ps1` with local API Server and Web running. It writes into `~/Pictures/Continental-Portfolio-Review` before images are selected for publication.

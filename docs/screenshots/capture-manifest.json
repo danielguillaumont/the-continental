@@ -1,0 +1,22 @@
+[
+    {
+        "file":  "overview-desktop.png",
+        "route":  "/",
+        "viewport":  "1440,900",
+        "commit":  "b564c8b",
+        "captured_at_utc":  "2026-11-07T20:32:08.3611836Z",
+        "sha256":  "99217b56f70bb559549643b67d963e5cadc476c4f75b2a67cf9676c11798675f",
+        "public_sharing_reviewed":  true,
+        "demo_data_confirmed":  false
+    },
+    {
+        "file":  "armory-desktop.png",
+        "route":  "/armory",
+        "viewport":  "1440,900",
+        "commit":  "b564c8b",
+        "captured_at_utc":  "2026-11-07T20:32:08.4469149Z",
+        "sha256":  "6837bb9eadd7af9251befb8fc7a6651c2505a3c5cd7311114d0ab27600176ac2",
+        "public_sharing_reviewed":  true,
+        "demo_data_confirmed":  false
+    }
+]
