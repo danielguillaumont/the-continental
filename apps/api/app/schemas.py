@@ -2,7 +2,7 @@ from datetime import date, datetime
 from typing import Literal
 from uuid import UUID
 
-from pydantic import BaseModel, Field, HttpUrl, field_validator
+from pydantic import BaseModel, Field, HttpUrl, ValidationInfo, field_validator, model_validator
 
 
 EvidenceKind = Literal[
@@ -113,6 +113,75 @@ class ProjectRead(BaseModel):
     summary: str
     repositoryUrl: str | None = None
     status: ProjectStatus
+    evidence: list[ProjectEvidenceRead]
+    createdAt: datetime
+    updatedAt: datetime
+
+
+# A career experience is a durable role/engagement record, not an Evidence item
+# with kind="experience". Its projects and evidence remain independent records.
+EmploymentType = Literal[
+    "full_time", "part_time", "contract", "internship",
+    "freelance", "volunteer", "other",
+]
+
+
+class ExperienceWrite(BaseModel):
+    organization: str = Field(min_length=1, max_length=160)
+    title: str = Field(min_length=1, max_length=160)
+    employmentType: EmploymentType | None = None
+    location: str | None = Field(default=None, max_length=160)
+    startDate: date
+    endDate: date | None = None
+    description: str = Field(min_length=10, max_length=3000)
+    highlights: list[str] = Field(default_factory=list, max_length=12)
+
+    @field_validator("organization", "title", "description")
+    @classmethod
+    def meaningful_text(cls, value: str, info: ValidationInfo) -> str:
+        clean = value.strip()
+        minimum = 10 if info.field_name == "description" else 1
+        if len(clean) < minimum:
+            raise ValueError("A meaningful value is required.")
+        return clean
+
+    @field_validator("location")
+    @classmethod
+    def optional_location(cls, value: str | None) -> str | None:
+        return value.strip() or None if value is not None else None
+
+    @field_validator("highlights")
+    @classmethod
+    def normalize_highlights(cls, values: list[str]) -> list[str]:
+        cleaned: list[str] = []
+        seen: set[str] = set()
+        for value in values:
+            text = value.strip()
+            if len(text) < 3 or len(text) > 300:
+                raise ValueError("Each accomplishment must be 3–300 characters.")
+            key = text.casefold()
+            if key in seen:
+                raise ValueError("Duplicate accomplishments are not allowed.")
+            seen.add(key)
+            cleaned.append(text)
+        return cleaned
+
+    @model_validator(mode="after")
+    def date_order(self):
+        if self.endDate is not None and self.endDate < self.startDate:
+            raise ValueError("End date must not precede start date.")
+        return self
+
+
+class ExperienceProjectRead(BaseModel):
+    id: UUID
+    name: str
+    status: ProjectStatus
+
+
+class ExperienceRead(ExperienceWrite):
+    id: UUID
+    projects: list[ExperienceProjectRead]
     evidence: list[ProjectEvidenceRead]
     createdAt: datetime
     updatedAt: datetime
