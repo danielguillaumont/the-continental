@@ -2,6 +2,8 @@
 
 ## Unreleased — v0.1 My Evidence
 
+- Added UX Foundation Slice 3B2: project-aware evidence creation, automatic attachment/return, explicit partial-failure recovery and workflow tests; no backend/schema changes.
+
 - Added UX Foundation Slice 3B1: a dedicated project detail workspace, clearer project index, reusable create/edit form, and supporting-evidence management with desktop/mobile acceptance checks. Backend routes and database schema unchanged.
 
 - Started UX Foundation Slice 3A: separate Overview, Projects and Evidence in navigation, clarify pages and project/evidence workflow, and extend screenshot capture coverage.

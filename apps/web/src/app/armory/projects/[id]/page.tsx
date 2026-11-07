@@ -8,6 +8,7 @@ import { AlertCircle, ArrowLeft, ArrowUpRight, ExternalLink, FilePlus2, FolderKa
 import { ProjectForm } from "@/components/projects/project-form";
 import { AppShell } from "@/components/shell/app-shell";
 import { attachProjectEvidence, deleteProject, detachProjectEvidence, getProject, listEvidence } from "@/lib/api";
+import { createEvidenceForProjectUrl } from "@/lib/project-evidence-flow";
 import { projectProofState, projectStatusLabel, proofCountLabel } from "@/lib/project-workspace";
 import type { EvidenceRecord } from "@/types/evidence";
 import type { ProjectRecord } from "@/types/project";
@@ -135,7 +136,7 @@ export default function ProjectDetailPage() {
                       </label>
                       <button type="button" disabled={busy || !selectedEvidence} onClick={() => void attach()} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-gold px-5 text-[13px] font-semibold text-text-inverse hover:bg-gold-hover disabled:cursor-not-allowed disabled:opacity-50"><Link2 className="size-4" aria-hidden="true" />Attach evidence</button>
                     </div>
-                    <div className="mt-5 rounded-md border border-border-subtle bg-surface-raised p-4"><p className="text-[13px] font-semibold text-text-primary">Need to record something new?</p><p className="mt-1 text-[12px] leading-5 text-text-secondary">Create it in Evidence, then come back here to attach it. Automatic return-and-link is planned for the next UX slice.</p><Link href="/armory/new" className="mt-3 inline-flex min-h-10 items-center gap-2 text-[13px] font-semibold text-gold hover:underline"><FilePlus2 className="size-4" aria-hidden="true" />Create an evidence record <ArrowUpRight className="size-4" aria-hidden="true" /></Link></div>
+                    <div className="mt-5 rounded-md border border-border-subtle bg-surface-raised p-4"><p className="text-[13px] font-semibold text-text-primary">Need to record something new?</p><p className="mt-1 text-[12px] leading-5 text-text-secondary">Create reusable evidence here. When saved, it will automatically link to this project and bring you back.</p><Link href={createEvidenceForProjectUrl(project.id)} className="mt-3 inline-flex min-h-10 items-center gap-2 text-[13px] font-semibold text-gold hover:underline"><FilePlus2 className="size-4" aria-hidden="true" />Create &amp; attach evidence <ArrowUpRight className="size-4" aria-hidden="true" /></Link></div>
                   </div>
                 </div>
               </section>

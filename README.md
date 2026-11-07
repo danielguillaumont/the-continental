@@ -38,12 +38,13 @@ The Continental now has a working database-backed evidence system and a project 
 - Desktop and mobile navigation
 - Project workspace: dedicated detail pages, clearer project list, shared create/edit form, and safe deletion confirmation
 - Projects can link and unlink existing evidence (without deleting original evidence)
+- Project-aware evidence creation: save, auto-attach and return to the project; attachment failures preserve the new evidence ID for safe retry
 - Project/evidence relational tables with additive Alembic migration
 - API integration tests for project lifecycle and relationship integrity
 
 ### Next
 
-- Complete UX Foundation 3B mobile/visual QA and project-to-evidence create-and-return workflow
+- Finish UX Foundation 3B2 validation: project-aware evidence creation, automatic linking and safe retry on partial failure
 - Experience and certification entities and relationships
 - Profile/skill evidence inspection and remaining v0.1 release validation
 - Screenshot review with sanitized demonstration data
