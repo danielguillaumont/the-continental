@@ -2,6 +2,8 @@
 
 ## Unreleased — v0.1 My Evidence
 
+- Added Certifications Registry Slice 1B: standalone responsive credential inventory/details, create/edit/delete workflows, calendar-based expiry status, Skill/Evidence linking, navigation, and frontend regression checks. No schema or backend changes; credential data and URLs remain owner-entered.
+
 - Added Certification Registry Slice 1A (backend only): standalone credential records, issuer and optional date/URL fields, data-preserving Alembic migration, independent links to existing Skills and Evidence, and disposable API/migration regression tests. No new dependencies or frontend destination. Credential URLs are owner-supplied; issuer verification is not automated.
 
 - Added Skills & Proof Slice 1A: read-only FastAPI skill inventory/detail endpoints based on existing normalized evidence relationships, a searchable/filterable Skills workspace and proof drill-down, status-aware summaries, navigation, and regression tests. No schema migration, new dependencies, or fabricated skill scores.
