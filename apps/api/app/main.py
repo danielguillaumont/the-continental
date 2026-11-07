@@ -14,6 +14,7 @@ from sqlalchemy.orm import Session
 from app.database import get_database_session
 from app.models import Evidence, Experience, Project, Skill
 from app.skill_proof import router as skills_router
+from app.certifications import router as certifications_router
 from app.schemas import (
     EvidenceCreate,
     EvidenceRead,
@@ -682,3 +683,4 @@ def detach_experience_evidence(
 
 # Read-only skills/proof projection uses existing normalized evidence relationships.
 app.include_router(skills_router)
+app.include_router(certifications_router)

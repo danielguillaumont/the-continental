@@ -82,6 +82,25 @@ experience_evidence = Table(
 )
 
 
+certification_skills = Table(
+    "certification_skills",
+    Base.metadata,
+    Column("certification_id", PGUUID(as_uuid=True),
+           ForeignKey("certifications.id", ondelete="CASCADE"), primary_key=True),
+    Column("skill_id", PGUUID(as_uuid=True),
+           ForeignKey("skills.id", ondelete="CASCADE"), primary_key=True),
+)
+
+certification_evidence = Table(
+    "certification_evidence",
+    Base.metadata,
+    Column("certification_id", PGUUID(as_uuid=True),
+           ForeignKey("certifications.id", ondelete="CASCADE"), primary_key=True),
+    Column("evidence_id", PGUUID(as_uuid=True),
+           ForeignKey("evidence.id", ondelete="CASCADE"), primary_key=True),
+)
+
+
 class Project(Base):
     __tablename__ = "projects"
 
@@ -136,6 +155,9 @@ class Skill(Base):
     evidence_items: Mapped[list["Evidence"]] = relationship(
         secondary=evidence_skills,
         back_populates="skills",
+    )
+    certifications: Mapped[list["Certification"]] = relationship(
+        secondary=certification_skills, back_populates="skills",
     )
 
 
@@ -211,6 +233,9 @@ class Evidence(Base):
     experiences: Mapped[list["Experience"]] = relationship(
         secondary=experience_evidence, back_populates="evidence_items",
     )
+    certifications: Mapped[list["Certification"]] = relationship(
+        secondary=certification_evidence, back_populates="evidence_items",
+    )
 
 
 class Experience(Base):
@@ -250,4 +275,43 @@ class Experience(Base):
     evidence_items: Mapped[list[Evidence]] = relationship(
         secondary=experience_evidence, back_populates="experiences", lazy="selectin",
         order_by="Evidence.created_at",
+    )
+
+
+class Certification(Base):
+    """A separately managed credential, independent from supporting proof."""
+
+    __tablename__ = "certifications"
+    __table_args__ = (
+        CheckConstraint(
+            "issued_at IS NULL OR expires_at IS NULL OR issued_at <= expires_at",
+            name="ck_certifications_date_order",
+        ),
+    )
+
+    id: Mapped[UUID] = mapped_column(
+        PGUUID(as_uuid=True), primary_key=True, default=uuid4,
+    )
+    name: Mapped[str] = mapped_column(String(160), nullable=False)
+    issuer: Mapped[str] = mapped_column(String(160), nullable=False)
+    credential_id: Mapped[str | None] = mapped_column(String(160), nullable=True)
+    credential_url: Mapped[str | None] = mapped_column(Text, nullable=True)
+    issued_at: Mapped[date | None] = mapped_column(Date, nullable=True)
+    expires_at: Mapped[date | None] = mapped_column(Date, nullable=True)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now(),
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False,
+        server_default=func.now(), onupdate=func.now(),
+    )
+
+    skills: Mapped[list[Skill]] = relationship(
+        secondary=certification_skills, back_populates="certifications",
+        lazy="selectin", order_by="Skill.normalized_name",
+    )
+    evidence_items: Mapped[list[Evidence]] = relationship(
+        secondary=certification_evidence, back_populates="certifications",
+        lazy="selectin", order_by="Evidence.created_at",
     )
