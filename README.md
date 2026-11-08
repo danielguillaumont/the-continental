@@ -47,6 +47,8 @@ Evidence records can be reused across projects, experiences, certifications and 
 
 ## Current Status
 
+> **Development after v0.2.0:** v0.3 Evidence Match has started with a read-only deterministic skill-to-evidence matching API. The matching interface, reviewed links, and realistic demo dataset are future slices; v0.2.0 remains the latest published release.
+
 **v0.2.0 — Dossier (released November 8, 2026).** The release is published on [GitHub](https://github.com/danielguillaumont/the-continental/releases/tag/v0.2.0). The final validation included 92 backend tests, 92 frontend tests, passing CI, and a local Dossier smoke check.
 
 Dossier builds on the v0.1 career record foundation. It supports source-preserving manual job intake, editable opportunity metadata and required/preferred requirements, an optional explicitly consented AI extraction preview, owner-reviewed selective approval, and durable source citations for newly approved metadata and technologies. Existing manual values are protected, and the original posting stays read-only.
@@ -217,7 +219,7 @@ Choose **Projects** in the main navigation to create project records, then open 
 | v0.0 | Foundation |
 | **v0.1** | **My Evidence** |
 | **v0.2** | **Dossier — released** |
-| v0.3 | Evidence Match |
+| v0.3 | Evidence Match — in progress |
 | v0.4 | Import |
 | v0.5 | Armory Generation |
 | v0.6+ | Contracts, Archive, workflows, integrations, intelligence |

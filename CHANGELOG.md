@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased — v0.3 Evidence Match
+
+- Slice 3A: read-only requirement-to-evidence candidate preview using literal saved Skill tags, with linked Project/Experience context, explicit unmatched states, no invented confidence or qualification claim, bounded results and regression tests. No model calls, new dependencies or database migration. The demo fixture and UI are planned for later slices.
+
 ## v0.2.0 — Dossier (release candidate; not tagged)
 
 - Release scope: manual job intake, source-grounded optional extraction preview, explicit selective approval, durable source citations, and offline integration coverage. The provider is disabled by default; a live model has not been verified. Local-only and unauthenticated; no matching or application generation.
