@@ -1,4 +1,5 @@
 import type { ExtractionPreview } from "@/types/dossier-extraction";
+import type { ReviewedApplyRequest, ReviewedApplyResult } from "@/lib/dossier-approval";
 import type { OpportunityCreatePayload, OpportunityRecord, OpportunityWritePayload, RequirementRecord, RequirementWritePayload } from "@/types/dossier";
 import { DossierHttpError, withDossierTimeout } from "@/lib/dossier-request";
 import type { ProfileRecord, ProfileWritePayload } from "@/types/profile";
@@ -378,4 +379,14 @@ export async function requestDossierExtractionPreview(opportunityId: string): Pr
     if (!response.ok) throw new DossierHttpError(await getErrorMessage(response), response.status);
     return response.json() as Promise<ExtractionPreview>;
   }, 45_000);
+}
+
+/** Slice 2D2: user-confirmed selective write. A timeout is an uncertain outcome. */
+export async function applyReviewedDossierExtraction(
+  opportunityId: string, payload: ReviewedApplyRequest,
+): Promise<ReviewedApplyResult> {
+  return dossierJson<ReviewedApplyResult>(
+    `${API_BASE_URL}/opportunities/${encodeURIComponent(opportunityId)}/apply-reviewed-extraction`,
+    { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) },
+  );
 }

@@ -86,7 +86,7 @@ export default function DossierDetailPage() {
           <div className="rounded-lg border border-border bg-surface p-5"><ShieldCheck className="size-5 text-gold" /><p className="mt-3 text-[12px] text-text-secondary">Required / preferred</p><p className="mt-1 text-[26px] font-semibold text-text-primary">{requirementCount(record, "required")} <span className="text-text-muted">/</span> {requirementCount(record, "preferred")}</p></div>
           <div className="rounded-lg border border-border bg-surface p-5"><FileLock2 className="size-5 text-gold" /><p className="mt-3 text-[12px] text-text-secondary">Extraction status</p><p className="mt-2 text-[16px] font-semibold text-text-primary">{record.extractionStatus === "not_run" ? "Not run · Manual" : record.extractionStatus === "completed" ? "Completed" : "Failed"}</p></div>
         </section>
-        <div className="mt-6"><ExtractionReview key={id} opportunityId={id} sourceText={record.sourceText} /></div>
+        <div className="mt-6"><ExtractionReview key={id} record={record} onApplied={(updated) => { setRecord(updated); setError(null); setEditing(false); setAddingRequirement(false); setEditingRequirement(null); }} /></div>
         {editing && <div className="mt-6"><OpportunityForm record={record} onCancel={() => setEditing(false)} onSaved={(saved) => { setRecord(saved); setEditing(false); setError(null); }} /></div>}
         <div className="mt-7 grid items-start gap-6 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
           <div className="min-w-0 space-y-6">
