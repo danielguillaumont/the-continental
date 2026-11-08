@@ -55,7 +55,7 @@ export function ContextBar({
         </div>
 
         <div className="font-technical text-[10px] uppercase tracking-[0.1em] text-text-muted">
-          v0.1
+          v0.2 dev
         </div>
       </div>
     </header>

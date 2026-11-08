@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+Slice 2B: added the responsive Dossier opportunity registry, paste-and-save intake, manual metadata editing, read-only original source, required/preferred requirement management, confirmation flows, and new navigation/API/frontend regression tests. No further backend migration, AI extraction, or match score.
+
 Started v0.2 Dossier Slice 2A: additive Opportunity/Requirement schema, source-preserving API, required/preferred editable requirements, provenance validation, and disposable integration/migration tests. AI extraction and UI are later slices.
 
 ## v0.1.0 — Career Record Foundation (released 2026-11-07)

@@ -7,6 +7,7 @@ export const destinations = {
   evidence: { href: "/armory", label: "Evidence", description: "Reusable records that support your work" },
   skills: { href: "/skills", label: "Skills", description: "Your capabilities and the proof behind them" },
   certifications: { href: "/certifications", label: "Certifications", description: "Credentials and supporting records" },
+  dossier: { href: "/dossier", label: "Dossier", description: "Saved job opportunities and their requirements" },
 } as const;
 
 export type Destination = keyof typeof destinations;
@@ -15,6 +16,7 @@ export type Destination = keyof typeof destinations;
 export function activeDestination(pathname: string): Destination | null {
   if (pathname === "/") return "overview";
   if (pathname === "/profile" || pathname.startsWith("/profile/")) return "profile";
+  if (pathname === "/dossier" || pathname.startsWith("/dossier/")) return "dossier";
   if (pathname === "/skills" || pathname.startsWith("/skills/")) return "skills";
   if (pathname === "/certifications" || pathname.startsWith("/certifications/")) return "certifications";
   if (pathname === "/experiences" || pathname.startsWith("/experiences/")) return "experiences";

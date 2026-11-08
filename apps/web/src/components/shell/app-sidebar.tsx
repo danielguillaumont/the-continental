@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Award, BriefcaseBusiness, FolderKanban, LayoutDashboard, LibraryBig, Tags, UserRound, type LucideIcon } from "lucide-react";
+import { Award, BriefcaseBusiness, FileSearch, FolderKanban, LayoutDashboard, LibraryBig, Tags, UserRound, type LucideIcon } from "lucide-react";
 
 import { BrandMark } from "@/components/shell/brand-mark";
 import { activeDestination, destinations, type Destination } from "@/lib/primary-navigation";
@@ -57,6 +57,8 @@ export function SidebarNavigation({ onNavigate }: { onNavigate?: () => void }) {
         <SidebarItem icon={Tags} destination="skills" active={active === "skills"} onSelect={onNavigate} />
         <SidebarItem icon={Award} destination="certifications" active={active === "certifications"} onSelect={onNavigate} />
       </div>
+      <p className="mb-2 mt-6 border-t border-border-subtle px-3 pt-5 text-[10px] font-semibold uppercase tracking-[0.16em] text-text-muted">Opportunity intelligence</p>
+      <SidebarItem icon={FileSearch} destination="dossier" active={active === "dossier"} onSelect={onNavigate} />
       <p className="mt-5 border-t border-border-subtle px-3 pt-4 text-[11px] leading-5 text-text-muted">
         Roles and projects describe your work. Evidence backs your skills with inspectable proof.
       </p>
@@ -72,7 +74,7 @@ export function AppSidebar() {
       <div className="border-t border-border-subtle px-5 py-4">
         <div className="flex items-center gap-2 text-[11px] text-text-muted">
           <span className="size-1.5 rounded-full bg-success" />
-          <span>v0.1 · Career record foundation</span>
+          <span>v0.2 · Dossier in development</span>
         </div>
       </div>
     </aside>
