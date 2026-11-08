@@ -1,6 +1,9 @@
 # Changelog
 
-## Unreleased
+## v0.2.0 — Dossier (release candidate; not tagged)
+
+- Release scope: manual job intake, source-grounded optional extraction preview, explicit selective approval, durable source citations, and offline integration coverage. The provider is disabled by default; a live model has not been verified. Local-only and unauthenticated; no matching or application generation.
+
 
 - Slice 2D3B: displayed persisted owner-approved metadata/technology citations in the Dossier, checked original-text SHA-256 and citation/value consistency before presentation, updated approval disclosures, and added offline full-API preview/approval/reload regressions plus frontend provenance tests. No migration, new dependency, or live model request.
 
