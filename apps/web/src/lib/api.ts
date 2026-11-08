@@ -1,3 +1,4 @@
+import type { ExtractionPreview } from "@/types/dossier-extraction";
 import type { OpportunityCreatePayload, OpportunityRecord, OpportunityWritePayload, RequirementRecord, RequirementWritePayload } from "@/types/dossier";
 import { DossierHttpError, withDossierTimeout } from "@/lib/dossier-request";
 import type { ProfileRecord, ProfileWritePayload } from "@/types/profile";
@@ -361,4 +362,20 @@ export async function updateOpportunityRequirement(id: string, requirementId: st
 
 export async function deleteOpportunityRequirement(id: string, requirementId: string): Promise<void> {
   return dossierDelete(`${API_BASE_URL}/opportunities/${encodeURIComponent(id)}/requirements/${encodeURIComponent(requirementId)}`);
+}
+
+
+/** Slice 2C2: explicit external-processing consent, preview-only read; NEVER writes the draft. */
+export async function requestDossierExtractionPreview(opportunityId: string): Promise<ExtractionPreview> {
+  // The provider may take 30 seconds. Do not apply the 15-second CRUD timeout.
+  return withDossierTimeout(async (signal) => {
+    const response = await fetch(`${API_BASE_URL}/opportunities/${encodeURIComponent(opportunityId)}/extraction-preview`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ confirmExternalProcessing: true }),
+      signal,
+    });
+    if (!response.ok) throw new DossierHttpError(await getErrorMessage(response), response.status);
+    return response.json() as Promise<ExtractionPreview>;
+  }, 45_000);
 }
