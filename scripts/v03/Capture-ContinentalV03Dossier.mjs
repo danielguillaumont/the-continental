@@ -9,6 +9,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { classifyReadiness, nextReadOnlyRecovery, buildReadinessExpression, buildRecoveryClickExpression } from './Capture-ContinentalV03Readiness.mjs';
+import { createBrowserApiTrace } from './BrowserRequestDiagnostics.mjs';
 
 function arg(name) {
   const index = process.argv.indexOf(`--${name}`);
@@ -103,7 +104,7 @@ let stderr = '';
 let failureReason = '';
 let lastState = null;
 const recoveries = { match: 0, reviews: 0 };
-const events = [];
+const apiTrace = createBrowserApiTrace();
 let lastRecoveryAt = 0;
 try {
   profile = await mkdtemp(path.join(os.tmpdir(), 'continental-v03e1-cdp-'));
@@ -148,18 +149,10 @@ try {
   if (!page) throw Error('No DevTools page target available');
   ws = await connectWebSocket(page.webSocketDebuggerUrl);
   const cdp = new Cdp(ws);
-  // Record only loopback API response status/path for debugging; never body data.
+  // Metadata-only trace of the exact local Dossier GET endpoints; no bodies or headers.
   ws.addEventListener('message', event => {
-    try {
-      const message = JSON.parse(event.data);
-      if (message.method !== 'Network.responseReceived') return;
-      const response = message.params?.response;
-      const u = new URL(response.url);
-      if (u.hostname === '127.0.0.1' && u.port === '8000' && u.pathname.startsWith('/opportunities/')) {
-        events.push({ path: u.pathname, status: response.status });
-        if (events.length > 40) events.shift();
-      }
-    } catch { /* ignore unrelated browser events */ }
+    try { apiTrace.observe(JSON.parse(event.data)); }
+    catch { /* Ignore malformed or unrelated DevTools messages. */ }
   });
   await cdp.send('Network.enable');
   await cdp.send('Page.enable');
@@ -245,7 +238,7 @@ try {
       `Failure reason: ${failureReason || 'none'}`,
       `UI state: ${JSON.stringify(lastState, null, 2)}`,
       `Read-only recovery attempts: ${JSON.stringify(recoveries)}`,
-      `Loopback API response status history: ${JSON.stringify(events, null, 2)}`,
+      `Loopback Dossier GET transport diagnostics: ${JSON.stringify(apiTrace.snapshot(), null, 2)}`,
       '--- BROWSER STDERR (tail) ---', stderr.slice(-15000)
     ].join('\n');
     await writeFile(browserLogPath, report, 'utf8');
