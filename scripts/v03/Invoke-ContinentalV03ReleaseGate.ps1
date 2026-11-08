@@ -11,7 +11,7 @@ $root = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
 $api = Join-Path $root 'apps\api'
 $web = Join-Path $root 'apps\web'
 $python = Join-Path $api '.venv\Scripts\python.exe'
-$expectedBranch = 'feat/v03-release-3e1'
+$allowedBranches = @('feat/v03-release-3e2b-polish', 'main')
 $container = 'continental-postgres'
 $opportunityIds = @(
     '5c5827de-cfd4-48bc-9a08-fab046b5826b',
@@ -56,7 +56,7 @@ try {
     Write-Host 'THE CONTINENTAL v0.3E1 -- RELEASE GATE' -ForegroundColor Cyan
     $branch = (& git.exe branch --show-current).Trim()
     Assert-Exit 'Cannot read branch.'
-    if ($branch -ne $expectedBranch) { throw "Wrong branch ($branch). Expected $expectedBranch." }
+    if ($branch -notin $allowedBranches) { throw "Wrong branch ($branch). Expected v0.3 release branch or main." }
     foreach ($required in @($python, (Join-Path $web 'package.json'))) {
         if (-not (Test-Path -LiteralPath $required)) { throw "Missing dependency: $required" }
     }
