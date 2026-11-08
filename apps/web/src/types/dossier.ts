@@ -32,6 +32,16 @@ export type OpportunityCreatePayload = OpportunityWritePayload & {
   sourceText: string;
 };
 
+export type OpportunityAttribution = {
+  id: string;
+  kind: "metadata" | "technology";
+  field: string;
+  value: string;
+  sourceExcerpt: string;
+  sourceSha256: string;
+  createdAt: string;
+};
+
 export type OpportunityRecord = OpportunityCreatePayload & {
   id: string;
   extractionProvider: string | null;
@@ -39,6 +49,7 @@ export type OpportunityRecord = OpportunityCreatePayload & {
   extractionPromptVersion: string | null;
   extractionStatus: ExtractionStatus;
   requirements: RequirementRecord[];
+  attributions: OpportunityAttribution[];
   createdAt: string;
   updatedAt: string;
 };
