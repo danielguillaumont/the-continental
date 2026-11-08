@@ -102,3 +102,38 @@ is performed.
 Slice 3D covers human confirmation/rejection and persistent review provenance.
 A recruiter-first README/gallery rewrite, sanitized screenshot, and final product
 polish remain part of Slice 3E, not this initial UI integration.
+
+
+## Slice 3D1 — owner-reviewed evidence decisions (backend)
+
+This slice is deliberately separate from automatic candidate discovery. A literal
+Skill-tag match remains a **candidate**, even after a user saves their own
+judgment. It is **not** an independently verified qualification or fit score.
+
+- **GET** `/opportunities/{id}/evidence-review-options` returns current bounded
+  candidate pairs and a fingerprint of the saved requirement and supporting
+  Evidence material. `truncatedRequirementIds` discloses limits. No writes.
+- **GET** `/opportunities/{id}/evidence-reviews` returns saved decisions, notes,
+  original reviewed wording and `current`/`stale` status. No writes.
+- **PUT** `/opportunities/{id}/requirements/{requirement_id}/evidence-reviews/{evidence_id}`
+  requires an explicit `decision` of `supports` or `not_relevant`, an owner note
+  (at least 10 characters for `supports`), and the current `expectedFingerprint`
+  from review options. Only current literal-skill candidates can be reviewed.
+  Repeated saves update the same record instead of creating duplicates.
+- **DELETE** the same pair URL removes *only the review record*, never the
+  Evidence record or its Skill/Project links.
+
+The snapshot covers requirement wording and kind, Evidence title, description,
+kind, owner-entered verification status, source, date, Skill tags, and related
+Project/Experience IDs. If any material changes or a candidate disappears, the
+prior review stays visible but is marked **stale**, requiring human re-review.
+A stale fingerprint or noncandidate write fails with HTTP 409; cross-Dossier
+requirement lookups return 404. Notes, decisions and current/stale state are
+never interpreted as model-generated findings.
+
+**Migration:** `a1d8c4f60e32`, parent `d39b2a4f7c61`, creates only the
+`evidence_reviews` table and its constraints/indexes. Verify a private
+PostgreSQL backup before running `alembic upgrade head`. Never downgrade
+review data casually. Run backend tests plus local PostgreSQL migration checks
+before merging. This slice adds no frontend action yet: 3D2 will integrate
+review/undo controls and preserve the current read-only candidate experience.

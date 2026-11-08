@@ -20,6 +20,7 @@ from app.opportunities import router as opportunities_router
 from app.dossier_extraction import router as dossier_extraction_router
 from app.dossier_approval import router as dossier_approval_router
 from app.evidence_match import router as evidence_match_router
+from app.evidence_reviews import router as evidence_reviews_router
 from app.schemas import (
     EvidenceCreate,
     EvidenceRead,
@@ -694,3 +695,4 @@ app.include_router(opportunities_router)
 app.include_router(dossier_extraction_router)
 app.include_router(dossier_approval_router)
 app.include_router(evidence_match_router)
+app.include_router(evidence_reviews_router)

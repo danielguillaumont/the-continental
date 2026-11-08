@@ -2,6 +2,8 @@
 
 ## Unreleased — v0.3 Evidence Match
 
+- Slice 3D1: added owner-reviewed supporting/not-relevant decisions for requirement/evidence candidates, clear owner-authored notes, stale-fingerprint detection, explicit reversal and deletion, and an additive PostgreSQL migration. Existing candidate previews remain read-only and unchanged; the review UI is planned for 3D2. No independent verification, fit score or model call.
+
 - Slice 3C1: added an interactive, read-only Evidence Match workspace in saved Dossiers. It presents requirement navigation, explicit candidate/review-needed outcomes, linked project/evidence records, source-safe external links, and request/version failure handling. Frontend regression tests cover schema, filtering and non-inferential language. No scoring, model calls, database writes or migrations.
 
 - Slice 3A: read-only requirement-to-evidence candidate preview using literal saved Skill tags, with linked Project/Experience context, explicit unmatched states, no invented confidence or qualification claim, bounded results and regression tests. No model calls, new dependencies or database migration. The interactive match UI is a later slice.
