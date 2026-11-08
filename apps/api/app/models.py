@@ -9,6 +9,7 @@ from sqlalchemy import (
     CheckConstraint,
     ForeignKey,
     String,
+    UniqueConstraint,
     Table,
     Text,
     func,
@@ -380,6 +381,10 @@ class Opportunity(Base):
         back_populates="opportunity", cascade="all, delete-orphan",
         lazy="selectin", order_by="(Requirement.position, Requirement.id)",
     )
+    attributions: Mapped[list["OpportunityAttribution"]] = relationship(
+        back_populates="opportunity", cascade="all, delete-orphan",
+        lazy="selectin", order_by="(OpportunityAttribution.created_at, OpportunityAttribution.id)",
+    )
 
 
 class Requirement(Base):
@@ -414,3 +419,41 @@ class Requirement(Base):
     )
 
     opportunity: Mapped[Opportunity] = relationship(back_populates="requirements")
+
+
+class OpportunityAttribution(Base):
+    """Owner-approved source citation for an applied metadata field or technology.
+
+    This records evidence of a string in the immutable posting, not independent
+    verification and not a claim about which AI model produced a suggestion.
+    """
+
+    __tablename__ = "opportunity_attributions"
+    __table_args__ = (
+        CheckConstraint(
+            "kind IN ('metadata', 'technology')", name="ck_opportunity_attributions_kind",
+        ),
+        UniqueConstraint(
+            "opportunity_id", "kind", "field_name", "value",
+            name="uq_opportunity_attributions_target_value",
+        ),
+    )
+
+    id: Mapped[UUID] = mapped_column(
+        PGUUID(as_uuid=True), primary_key=True, default=uuid4,
+    )
+    opportunity_id: Mapped[UUID] = mapped_column(
+        PGUUID(as_uuid=True),
+        ForeignKey("opportunities.id", ondelete="CASCADE"),
+        nullable=False, index=True,
+    )
+    kind: Mapped[str] = mapped_column(String(16), nullable=False)
+    field_name: Mapped[str] = mapped_column(String(32), nullable=False)
+    value: Mapped[str] = mapped_column(String(240), nullable=False)
+    source_excerpt: Mapped[str] = mapped_column(Text, nullable=False)
+    source_sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now(),
+    )
+
+    opportunity: Mapped[Opportunity] = relationship(back_populates="attributions")

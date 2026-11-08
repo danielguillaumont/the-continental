@@ -13,7 +13,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.database import get_database_session
-from app.models import Opportunity, Requirement
+from app.models import Opportunity, OpportunityAttribution, Requirement
 from app.opportunities import to_read
 from app.opportunity_schemas import OpportunityRead
 
@@ -40,6 +40,8 @@ class ApprovedMetadata(BaseModel):
             raise ValueError("Approved metadata value violates its field length.")
         if not self.sourceExcerpt.strip():
             raise ValueError("An exact supporting excerpt is required.")
+        if self.value.strip().casefold() not in self.sourceExcerpt.casefold():
+            raise ValueError("Approved metadata value must occur in its supporting excerpt.")
         return self
 
 
@@ -145,6 +147,11 @@ def apply_reviewed_extraction(
         else:
             setattr(record, column, item.value.strip())
             applied_metadata.append(item.field)
+            session.add(OpportunityAttribution(
+                opportunity_id=opportunity_id, kind="metadata",
+                field_name=item.field, value=item.value.strip(),
+                source_excerpt=item.sourceExcerpt, source_sha256=actual_hash,
+            ))
 
     existing_technologies = list(record.technologies or [])
     technology_keys = {normalized(value) for value in existing_technologies}
@@ -161,6 +168,11 @@ def apply_reviewed_extraction(
             existing_technologies.append(name)
             technology_keys.add(key)
             added_technologies.append(name)
+            session.add(OpportunityAttribution(
+                opportunity_id=opportunity_id, kind="technology",
+                field_name="technologies", value=name,
+                source_excerpt=item.sourceExcerpt, source_sha256=actual_hash,
+            ))
     if added_technologies:
         record.technologies = existing_technologies
 

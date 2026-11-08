@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Slice 2D3A: added additive owner-reviewed source attribution records for approved metadata and technologies, exposed on Dossier API reads. Manual edits invalidate outdated citations; requirements continue to retain their own excerpts. Existing data is never retroactively labeled with invented citations, and no live AI verification is claimed.
+
 - Slice 2D2: added opt-in selection and correction of individual AI preview suggestions, source-checked approval confirmation, guarded apply API integration, manual conflict visibility, result summaries, and uncertain-write recovery. No new provider configuration, migration or dependencies.
 
 - Slice 2D1: added a source-fingerprint-checked, explicitly approved selection API for opportunity metadata, technologies and requirements. Existing manual values are preserved, duplicate requirements are skipped, and invalid citations reject the entire batch. No migration or model call.

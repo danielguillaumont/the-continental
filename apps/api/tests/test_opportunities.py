@@ -310,7 +310,7 @@ def test_additive_migration_keeps_all_prior_tables_and_rows():
     engine = create_engine("sqlite+pysqlite:///:memory:", poolclass=StaticPool)
     old = [
         table for table in Base.metadata.sorted_tables
-        if table.name not in {"opportunities", "requirements"}
+        if table.name not in {"opportunities", "requirements", "opportunity_attributions"}
     ]
     Base.metadata.create_all(engine, tables=old)
     factory = sessionmaker(bind=engine, expire_on_commit=False)

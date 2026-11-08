@@ -7,9 +7,10 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.database import get_database_session
-from app.models import Opportunity, Requirement
+from app.models import Opportunity, OpportunityAttribution, Requirement
 from app.opportunity_schemas import (
     OpportunityCreate,
+    OpportunityAttributionRead,
     OpportunityRead,
     OpportunityWrite,
     RequirementRead,
@@ -78,6 +79,14 @@ def to_read(record: Opportunity) -> OpportunityRead:
         extractionPromptVersion=record.extraction_prompt_version,
         extractionStatus=record.extraction_status,
         requirements=[requirement_to_read(item) for item in record.requirements],
+        attributions=[
+            OpportunityAttributionRead(
+                id=item.id, kind=item.kind, field=item.field_name,
+                value=item.value, sourceExcerpt=item.source_excerpt,
+                sourceSha256=item.source_sha256, createdAt=item.created_at,
+            )
+            for item in record.attributions
+        ],
         createdAt=record.created_at,
         updatedAt=record.updated_at,
     )
@@ -128,9 +137,23 @@ def update_opportunity(
 ) -> OpportunityRead:
     record = get_or_404(session, opportunity_id)
     assign_metadata(record, payload)
+    # Manual edits can supersede a previously approved value. Never leave a
+    # source attribution attached to a different value after a manual PUT.
+    metadata_columns = {
+        "title": "title", "company": "company", "location": "location",
+        "employmentType": "employment_type", "salaryText": "salary_text",
+    }
+    for citation in list(record.attributions):
+        if citation.kind == "metadata":
+            current = getattr(record, metadata_columns.get(citation.field_name, ""), None)
+            if current != citation.value:
+                session.delete(citation)
+        elif citation.kind == "technology" and citation.value not in (record.technologies or []):
+            session.delete(citation)
     session.commit()
-    session.refresh(record)
-    return to_read(record)
+    session.expire_all()
+    fresh = get_or_404(session, opportunity_id)
+    return to_read(fresh)
 
 
 @router.delete("/{opportunity_id}", status_code=status.HTTP_204_NO_CONTENT)
