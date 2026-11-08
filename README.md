@@ -50,6 +50,12 @@ The next milestone is v0.2 - Dossier, starting with structured job opportunity r
 This repository is still a local-only development application, not a hosted service.
 
 
+### v0.2 Dossier - in progress
+
+Slice 2A introduces the source-preserving **Opportunity Registry backend**. Raw job postings can be saved with optional structured metadata and individually editable required/preferred requirements. Original source text and stable requirement IDs are preserved; extraction status remains `not_run` until the AI extraction slice is implemented. See [`docs/development/v02-dossier-1a.md`](docs/development/v02-dossier-1a.md).
+
+**Current limitations:** No Dossier frontend or automated extraction yet. v0.2 is in active development; the published release remains v0.1.0.
+
 ### Working
 
 - Responsive Next.js application shell with distinct Overview, Profile, Experience, Projects, Evidence, Skills, and Certifications navigation

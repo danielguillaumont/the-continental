@@ -16,6 +16,7 @@ from app.models import Evidence, Experience, Project, Skill
 from app.skill_proof import router as skills_router
 from app.certifications import router as certifications_router
 from app.profile import router as profile_router
+from app.opportunities import router as opportunities_router
 from app.schemas import (
     EvidenceCreate,
     EvidenceRead,
@@ -686,3 +687,4 @@ def detach_experience_evidence(
 app.include_router(skills_router)
 app.include_router(certifications_router)
 app.include_router(profile_router)
+app.include_router(opportunities_router)
