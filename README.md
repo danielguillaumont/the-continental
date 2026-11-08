@@ -58,7 +58,9 @@ Slice 2C1 adds an **opt-in, review-only AI extraction preview endpoint** (`POST 
 
 Slice 2C2 adds an **AI preview review panel** to each Dossier with explicit consent, source fingerprint verification, field-by-field citations, requirement classifications, and clear unconfigured-provider/error states. Nothing is persisted or approved by AI. See [`2C2`](docs/development/v02-dossier-2c2.md).
 
-**Current limitations:** Extraction is disabled unless configured explicitly; the UI supports opt-in, read-only preview review in 2C2; approval and saving remain deferred to 2D. No job-to-evidence matching or AI-generated application material is implemented. v0.2 is in active development; the published release remains v0.1.0.
+Slice 2D1 introduces a **guarded, transactional approval API** for explicitly selected suggestions. Manual fields remain protected and stale/fabricated excerpts are rejected. Slice 2D2 adds individual selection, correction, confirmation and save-result reporting to the AI review panel. See [`2D1`](docs/development/v02-dossier-2d1.md) and [`2D2`](docs/development/v02-dossier-2d2.md).
+
+**Current limitations:** Extraction remains disabled unless configured explicitly. Source-backed approval is supported, but the model/provider has not been verified with a live request. Model identity and extraction status are not updated by approval, and metadata/technology source excerpts are validated at write time but not yet stored as permanent citations. No job-to-evidence matching or AI-generated application material is implemented. v0.2 is in active development; the published release remains v0.1.0.
 
 ### Working
 
@@ -235,4 +237,4 @@ Choose **Projects** in the main navigation to create project records, then open 
 
 The Continental is under active development and intentionally public so its progression from structured career data to grounded AI workflows can be followed through the commit history.
 
-> **v0.2 Slice 2D1 (in development):** the backend can apply explicitly selected, source-checked Dossier suggestions without overwriting manual fields. The approval UI and full live-provider verification are still pending.
+> **v0.2 Slices 2D1-2D2 (in development):** the backend and UI allow explicit selection and source-checked saving of reviewed Dossier suggestions without overwriting manual fields. Live-provider verification and permanent metadata/technology citation storage are still pending.

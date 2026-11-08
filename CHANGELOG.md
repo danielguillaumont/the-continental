@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Slice 2D2: added opt-in selection and correction of individual AI preview suggestions, source-checked approval confirmation, guarded apply API integration, manual conflict visibility, result summaries, and uncertain-write recovery. No new provider configuration, migration or dependencies.
+
 - Slice 2D1: added a source-fingerprint-checked, explicitly approved selection API for opportunity metadata, technologies and requirements. Existing manual values are preserved, duplicate requirements are skipped, and invalid citations reject the entire batch. No migration or model call.
 
 - Slice 2C2: added an explicit-consent, review-only AI extraction panel in each Dossier, with source fingerprint verification, exact supporting excerpts, disabled-provider and timeout states, plus offline frontend tests. No draft persistence, database migration, or new dependencies.
