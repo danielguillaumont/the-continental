@@ -37,8 +37,8 @@ $root = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
 Push-Location $root
 try {
     $branch = (& git.exe branch --show-current).Trim()
-    if ($LASTEXITCODE -ne 0 -or $branch -ne 'feat/v03-release-3e1') {
-        throw 'Wrong branch for 3E1 screenshot capture.'
+    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($branch)) {
+        throw 'Unable to verify Git branch for screenshot capture.'
     }
 
     # IDs and titles come from the known v0.3 fictional fixture.
