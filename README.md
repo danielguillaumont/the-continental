@@ -237,4 +237,4 @@ Choose **Projects** in the main navigation to create project records, then open 
 
 The Continental is under active development and intentionally public so its progression from structured career data to grounded AI workflows can be followed through the commit history.
 
-> **v0.2 Slices 2D1-2D2 (in development):** the backend and UI allow explicit selection and source-checked saving of reviewed Dossier suggestions without overwriting manual fields. Live-provider verification and permanent metadata/technology citation storage are still pending.
+> **v0.2 Slices 2D1-2D2 (in development):** the backend and UI allow explicit selection and source-checked saving of reviewed Dossier suggestions without overwriting manual fields. Live-provider verification is still pending. Slice 2D3A retains source citations for newly approved metadata and technology values; citations for approvals saved before this migration cannot be reconstructed safely.

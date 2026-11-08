@@ -100,6 +100,18 @@ class RequirementRead(RequirementWrite):
     updatedAt: datetime
 
 
+class OpportunityAttributionRead(BaseModel):
+    """Citation retained for a specifically approved value; not AI verification."""
+
+    id: UUID
+    kind: Literal["metadata", "technology"]
+    field: str
+    value: str
+    sourceExcerpt: str
+    sourceSha256: str
+    createdAt: datetime
+
+
 class OpportunityRead(OpportunityWrite):
     id: UUID
     sourceText: str
@@ -109,5 +121,6 @@ class OpportunityRead(OpportunityWrite):
     extractionPromptVersion: str | None
     extractionStatus: Literal["not_run", "completed", "failed"]
     requirements: list[RequirementRead]
+    attributions: list[OpportunityAttributionRead]
     createdAt: datetime
     updatedAt: datetime
