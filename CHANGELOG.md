@@ -2,9 +2,10 @@
 
 ## Unreleased — v0.3 Evidence Match
 
-- Slice 3A: read-only requirement-to-evidence candidate preview using literal saved Skill tags, with linked Project/Experience context, explicit unmatched states, no invented confidence or qualification claim, bounded results and regression tests. No model calls, new dependencies or database migration. The demo fixture and UI are planned for later slices.
+- Slice 3A: read-only requirement-to-evidence candidate preview using literal saved Skill tags, with linked Project/Experience context, explicit unmatched states, no invented confidence or qualification claim, bounded results and regression tests. No model calls, new dependencies or database migration. The interactive match UI is a later slice.
+- Slice 3B: added an opt-in, dry-run-first, repeatable terminal seeder for three clearly fictional opportunities, three demo projects, five unverified evidence records, and 15 requirements. The guard creates a private verified database backup before applying and leaves existing career records untouched. Added disposable API integration/safety tests. No migration or new runtime dependencies.
 
-## v0.2.0 — Dossier (release candidate; not tagged)
+## v0.2.0 — Dossier (released 2026-11-08)
 
 - Release scope: manual job intake, source-grounded optional extraction preview, explicit selective approval, durable source citations, and offline integration coverage. The provider is disabled by default; a live model has not been verified. Local-only and unauthenticated; no matching or application generation.
 

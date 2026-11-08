@@ -1,0 +1,129 @@
+{
+  "fixtureId": "continental.v03.demo.v1",
+  "disclaimer": "Fictional demonstration content. Not real employers, job advertisements, employment history, or independently verified evidence.",
+  "projects": [
+    {
+      "name": "Sentinel Ridge Cluster Lab",
+      "summary": "[continental.v03.demo.v1] Fictional demonstration project: evaluated Kubernetes admission controls, Terraform plan checks, and CI policy regression scenarios. This is sample portfolio data, not a claim of completed client work.",
+      "repositoryUrl": null,
+      "status": "completed"
+    },
+    {
+      "name": "Harborlight API Security Bench",
+      "summary": "[continental.v03.demo.v1] Fictional demonstration project: API authorization tests, Python security regressions, and a structured OWASP ASVS review workflow. Sample work only, not actual employment or verified assessment.",
+      "repositoryUrl": null,
+      "status": "completed"
+    },
+    {
+      "name": "Fieldstone Reliability Toolkit",
+      "summary": "[continental.v03.demo.v1] Fictional demonstration project: operational tooling for Go services, Linux deployment runbooks, Docker packaging, and Kubernetes incident drills. Not a representation of real production operations.",
+      "repositoryUrl": null,
+      "status": "completed"
+    }
+  ],
+  "evidence": [
+    {
+      "title": "Kubernetes admission-policy regression suite",
+      "kind": "artifact",
+      "description": "[continental.v03.demo.v1] Fictional test matrix for Kubernetes admission behavior, including accepted and rejected configuration examples. Sample evidence only; no external validation or implementation is claimed.",
+      "skills": ["Kubernetes", "Go", "Terraform"],
+      "status": "unverified",
+      "source": {"label": "Fictional demo fixture — no external source"},
+      "occurredAt": null,
+      "projectName": "Sentinel Ridge Cluster Lab"
+    },
+    {
+      "title": "Terraform plan-control validation workflow",
+      "kind": "artifact",
+      "description": "[continental.v03.demo.v1] Fictional workflow describing Terraform plan inspection, AWS configuration policy rules, and GitHub Actions check gates. Illustrative data, not a real audit report.",
+      "skills": ["Terraform", "AWS", "GitHub Actions"],
+      "status": "unverified",
+      "source": {"label": "Fictional demo fixture — no external source"},
+      "occurredAt": null,
+      "projectName": "Sentinel Ridge Cluster Lab"
+    },
+    {
+      "title": "API authorization regression suite",
+      "kind": "artifact",
+      "description": "[continental.v03.demo.v1] Fictional API permission tests and expected response matrix organized with Python, REST APIs, and OWASP ASVS. It does not claim a real penetration test or assessment.",
+      "skills": ["Python", "REST APIs", "OWASP ASVS"],
+      "status": "unverified",
+      "source": {"label": "Fictional demo fixture — no external source"},
+      "occurredAt": null,
+      "projectName": "Harborlight API Security Bench"
+    },
+    {
+      "title": "CI security-analysis integration notes",
+      "kind": "artifact",
+      "description": "[continental.v03.demo.v1] Fictional CI workflow notes illustrating SAST alerts, GitHub Actions, and Python regression checks. Sample data; no actual security scan or finding is asserted.",
+      "skills": ["GitHub Actions", "SAST", "Python"],
+      "status": "unverified",
+      "source": {"label": "Fictional demo fixture — no external source"},
+      "occurredAt": null,
+      "projectName": "Harborlight API Security Bench"
+    },
+    {
+      "title": "Linux service recovery runbook",
+      "kind": "artifact",
+      "description": "[continental.v03.demo.v1] Fictional service restart and rollback runbook covering Linux hosts, Docker containers, and Go service health endpoints. Not evidence of production incident response.",
+      "skills": ["Linux", "Docker", "Go"],
+      "status": "unverified",
+      "source": {"label": "Fictional demo fixture — no external source"},
+      "occurredAt": null,
+      "projectName": "Fieldstone Reliability Toolkit"
+    }
+  ],
+  "opportunities": [
+    {
+      "title": "Cloud Security Engineer",
+      "company": "Cedarline Cloud Operations (fictional)",
+      "location": "Vancouver, BC — Hybrid",
+      "employmentType": "Full-time",
+      "salaryText": null,
+      "sourceUrl": null,
+      "technologies": ["Kubernetes", "Terraform", "AWS", "Python", "GitHub Actions"],
+      "sourceText": "[continental.v03.demo.v1] FICTIONAL JOB POSTING — not a real vacancy.\nCedarline Cloud Operations (fictional) — Cloud Security Engineer\nLocation: Vancouver, BC — Hybrid\nRequired qualifications:\nBuild and validate Kubernetes admission controls.\nAutomate cloud infrastructure with Terraform and AWS.\nUse Python to develop security automation.\nPreferred qualifications:\nExperience coordinating production incident response.\nBuild secure CI pipelines with GitHub Actions.",
+      "requirements": [
+        {"text": "Build and validate Kubernetes admission controls.", "kind": "required"},
+        {"text": "Automate cloud infrastructure with Terraform and AWS.", "kind": "required"},
+        {"text": "Use Python to develop security automation.", "kind": "required"},
+        {"text": "Experience coordinating production incident response.", "kind": "preferred"},
+        {"text": "Build secure CI pipelines with GitHub Actions.", "kind": "preferred"}
+      ]
+    },
+    {
+      "title": "Application Security Engineer",
+      "company": "Harborlight Security Products (fictional)",
+      "location": "Toronto, ON — Remote",
+      "employmentType": "Full-time",
+      "salaryText": null,
+      "sourceUrl": null,
+      "technologies": ["Python", "REST APIs", "OWASP ASVS", "GitHub Actions", "SAST"],
+      "sourceText": "[continental.v03.demo.v1] FICTIONAL JOB POSTING — not a real vacancy.\nHarborlight Security Products (fictional) — Application Security Engineer\nLocation: Toronto, ON — Remote\nRequired qualifications:\nReview REST APIs for authentication and authorization weaknesses.\nAutomate security regression tests in Python.\nUse OWASP ASVS to structure application security reviews.\nPreferred qualifications:\nExperience operating SAST pipelines.\nExperience with binary exploitation research.",
+      "requirements": [
+        {"text": "Review REST APIs for authentication and authorization weaknesses.", "kind": "required"},
+        {"text": "Automate security regression tests in Python.", "kind": "required"},
+        {"text": "Use OWASP ASVS to structure application security reviews.", "kind": "required"},
+        {"text": "Experience operating SAST pipelines.", "kind": "preferred"},
+        {"text": "Experience with binary exploitation research.", "kind": "preferred"}
+      ]
+    },
+    {
+      "title": "Platform Reliability Engineer",
+      "company": "Westhaven Platform Collective (fictional)",
+      "location": "Burnaby, BC — Hybrid",
+      "employmentType": "Full-time",
+      "salaryText": null,
+      "sourceUrl": null,
+      "technologies": ["Go", "Kubernetes", "Linux", "Docker", "Terraform", "Prometheus"],
+      "sourceText": "[continental.v03.demo.v1] FICTIONAL JOB POSTING — not a real vacancy.\nWesthaven Platform Collective (fictional) — Platform Reliability Engineer\nLocation: Burnaby, BC — Hybrid\nRequired qualifications:\nBuild Go services for Kubernetes environments.\nOperate Linux workloads using Docker.\nImplement service monitoring with Prometheus.\nPreferred qualifications:\nUse Terraform for infrastructure changes.\nExperience leading large-scale disaster recovery exercises.",
+      "requirements": [
+        {"text": "Build Go services for Kubernetes environments.", "kind": "required"},
+        {"text": "Operate Linux workloads using Docker.", "kind": "required"},
+        {"text": "Implement service monitoring with Prometheus.", "kind": "required"},
+        {"text": "Use Terraform for infrastructure changes.", "kind": "preferred"},
+        {"text": "Experience leading large-scale disaster recovery exercises.", "kind": "preferred"}
+      ]
+    }
+  ]
+}
