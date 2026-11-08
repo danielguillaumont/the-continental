@@ -1,3 +1,5 @@
+import type { OpportunityCreatePayload, OpportunityRecord, OpportunityWritePayload, RequirementRecord, RequirementWritePayload } from "@/types/dossier";
+import { DossierHttpError, withDossierTimeout } from "@/lib/dossier-request";
 import type { ProfileRecord, ProfileWritePayload } from "@/types/profile";
 import type { CertificationRecord, CertificationWritePayload } from "@/types/certification";
 import type { SkillDetail, SkillSummary } from "@/types/skill";
@@ -302,4 +304,61 @@ export async function saveProfile(payload: ProfileWritePayload): Promise<Profile
   });
   if (!response.ok) throw new Error(await getErrorMessage(response));
   return response.json();
+}
+
+// Dossier 2B: bounded requests. A timeout on a write is an UNKNOWN outcome,
+// not proof of failure, so the UI must inspect saved records before retrying.
+async function dossierJson<T>(url: string, init: RequestInit = {}): Promise<T> {
+  return withDossierTimeout(async (signal) => {
+    const response = await fetch(url, { ...init, signal });
+    if (!response.ok) throw new DossierHttpError(await getErrorMessage(response), response.status);
+    return response.json() as Promise<T>;
+  });
+}
+
+async function dossierDelete(url: string): Promise<void> {
+  return withDossierTimeout(async (signal) => {
+    const response = await fetch(url, { method: "DELETE", signal });
+    if (!response.ok) throw new DossierHttpError(await getErrorMessage(response), response.status);
+  });
+}
+
+export async function listOpportunities(): Promise<OpportunityRecord[]> {
+  return dossierJson<OpportunityRecord[]>(`${API_BASE_URL}/opportunities`, { cache: "no-store" });
+}
+
+export async function getOpportunity(id: string): Promise<OpportunityRecord> {
+  return dossierJson<OpportunityRecord>(`${API_BASE_URL}/opportunities/${encodeURIComponent(id)}`, { cache: "no-store" });
+}
+
+export async function createOpportunity(payload: OpportunityCreatePayload): Promise<OpportunityRecord> {
+  return dossierJson<OpportunityRecord>(`${API_BASE_URL}/opportunities`, {
+    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
+  });
+}
+
+export async function updateOpportunity(id: string, payload: OpportunityWritePayload): Promise<OpportunityRecord> {
+  return dossierJson<OpportunityRecord>(`${API_BASE_URL}/opportunities/${encodeURIComponent(id)}`, {
+    method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
+  });
+}
+
+export async function deleteOpportunity(id: string): Promise<void> {
+  return dossierDelete(`${API_BASE_URL}/opportunities/${encodeURIComponent(id)}`);
+}
+
+export async function addOpportunityRequirement(id: string, payload: RequirementWritePayload): Promise<RequirementRecord> {
+  return dossierJson<RequirementRecord>(`${API_BASE_URL}/opportunities/${encodeURIComponent(id)}/requirements`, {
+    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
+  });
+}
+
+export async function updateOpportunityRequirement(id: string, requirementId: string, payload: RequirementWritePayload): Promise<RequirementRecord> {
+  return dossierJson<RequirementRecord>(`${API_BASE_URL}/opportunities/${encodeURIComponent(id)}/requirements/${encodeURIComponent(requirementId)}`, {
+    method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
+  });
+}
+
+export async function deleteOpportunityRequirement(id: string, requirementId: string): Promise<void> {
+  return dossierDelete(`${API_BASE_URL}/opportunities/${encodeURIComponent(id)}/requirements/${encodeURIComponent(requirementId)}`);
 }
