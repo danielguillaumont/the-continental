@@ -47,7 +47,7 @@ Evidence records can be reused across projects, experiences, certifications and 
 
 ## Current Status
 
-> **Development after v0.2.0:** v0.3 Evidence Match has started with a read-only deterministic skill-to-evidence matching API. Slice 3B adds an optional, dry-run-first terminal seeder of explicitly fictional opportunities, projects, evidence and skills. No demo content is installed automatically. The matching interface and reviewed associations remain upcoming; v0.2.0 is the latest release.
+> **Development after v0.2.0:** v0.3 Evidence Match has started with a read-only deterministic skill-to-evidence matching API. Slice 3B adds an optional, dry-run-first terminal seeder of explicitly fictional opportunities, projects, evidence and skills. No demo content is installed automatically. Slice 3C1 now adds a read-only, requirement-by-requirement Evidence Match workspace within each Dossier, with candidate evidence, linked projects and visible review states. Persistently reviewed associations remain upcoming; v0.2.0 is the latest published release.
 
 **v0.2.0 — Dossier (released November 8, 2026).** The release is published on [GitHub](https://github.com/danielguillaumont/the-continental/releases/tag/v0.2.0). The final validation included 92 backend tests, 92 frontend tests, passing CI, and a local Dossier smoke check.
 
