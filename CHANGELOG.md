@@ -2,9 +2,9 @@
 
 ## Unreleased
 
-The next feature release is v0.2 — Dossier. No v0.2 functionality is included in this release candidate.
+Started v0.2 Dossier Slice 2A: additive Opportunity/Requirement schema, source-preserving API, required/preferred editable requirements, provenance validation, and disposable integration/migration tests. AI extraction and UI are later slices.
 
-## v0.1.0 — My Evidence (release candidate)
+## v0.1.0 — Career Record Foundation (released 2026-11-07)
 
 - Completed the v0.1 career-record foundation across Profile, Experience, Projects, Evidence, Skills and Certifications, including reusable relationships and navigable proof.
 - Added a GitHub Actions workflow for backend regression, frontend tests, lint, production build, and production dependency audit.
@@ -38,4 +38,4 @@ The next feature release is v0.2 — Dossier. No v0.2 functionality is included 
 - Added disposable SQLite integration tests for project integrity and existing evidence CRUD.
 - Corrected mobile navigation's release label to v0.1.
 
-This is a release candidate, not a tagged v0.1.0 release. Tag only after GitHub Actions and final release review pass.
+v0.1.0 was tagged and released after backend/frontend CI checks passed.

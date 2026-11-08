@@ -344,3 +344,73 @@ class Profile(Base):
         DateTime(timezone=True), nullable=False,
         server_default=func.now(), onupdate=func.now()
     )
+
+
+class Opportunity(Base):
+    """A saved job posting. The original text never changes during metadata edits."""
+
+    __tablename__ = "opportunities"
+
+    id: Mapped[UUID] = mapped_column(
+        PGUUID(as_uuid=True), primary_key=True, default=uuid4,
+    )
+    source_text: Mapped[str] = mapped_column(Text, nullable=False)
+    source_url: Mapped[str | None] = mapped_column(Text, nullable=True)
+    title: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    company: Mapped[str | None] = mapped_column(String(160), nullable=True)
+    location: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    employment_type: Mapped[str | None] = mapped_column(String(60), nullable=True)
+    salary_text: Mapped[str | None] = mapped_column(String(240), nullable=True)
+    technologies: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    extraction_provider: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    extraction_model: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    extraction_prompt_version: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    extraction_status: Mapped[str] = mapped_column(
+        String(16), nullable=False, default="not_run", server_default="not_run",
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now(),
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False,
+        server_default=func.now(), onupdate=func.now(),
+    )
+
+    requirements: Mapped[list["Requirement"]] = relationship(
+        back_populates="opportunity", cascade="all, delete-orphan",
+        lazy="selectin", order_by="(Requirement.position, Requirement.id)",
+    )
+
+
+class Requirement(Base):
+    """Individually editable extracted or manually entered job requirement."""
+
+    __tablename__ = "requirements"
+    __table_args__ = (
+        CheckConstraint(
+            "kind IN ('required', 'preferred')",
+            name="ck_requirements_kind",
+        ),
+        CheckConstraint("position >= 0", name="ck_requirements_position"),
+    )
+
+    id: Mapped[UUID] = mapped_column(
+        PGUUID(as_uuid=True), primary_key=True, default=uuid4,
+    )
+    opportunity_id: Mapped[UUID] = mapped_column(
+        PGUUID(as_uuid=True), ForeignKey("opportunities.id", ondelete="CASCADE"),
+        nullable=False, index=True,
+    )
+    position: Mapped[int] = mapped_column(nullable=False)
+    text: Mapped[str] = mapped_column(Text, nullable=False)
+    kind: Mapped[str] = mapped_column(String(16), nullable=False)
+    source_excerpt: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now(),
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False,
+        server_default=func.now(), onupdate=func.now(),
+    )
+
+    opportunity: Mapped[Opportunity] = relationship(back_populates="requirements")
