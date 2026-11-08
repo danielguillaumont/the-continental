@@ -129,7 +129,7 @@ export function ApprovalReview({
     </div>
 
     <div className="mt-5 rounded-md border border-border bg-surface p-4">
-      <div className="flex items-start gap-2 text-[12px] text-text-secondary"><ShieldAlert className="mt-0.5 size-4 shrink-0 text-gold" /><p>Only selected, source-supported additions are submitted. Corrections are your own reviewed interpretation; the system does not independently verify job claims. Metadata and technology citations are checked but not yet stored permanently.</p></div>
+      <div className="flex items-start gap-2 text-[12px] text-text-secondary"><ShieldAlert className="mt-0.5 size-4 shrink-0 text-gold" /><p>Only selected, source-supported additions are submitted. Corrections are your own reviewed interpretation; the system does not independently verify job claims. Newly approved metadata and technology citations are stored with the saved Dossier; earlier uncited entries remain uncited.</p></div>
       {plan.skipped.length > 0 && <p className="mt-3 text-[11px] text-text-muted">Skipped from current selection: {plan.skipped.join("; ")}</p>}
       {plan.error && <p className="mt-3 flex items-center gap-2 text-[12px] text-text-secondary"><AlertCircle className="size-4" />{plan.error}</p>}
       <label className="mt-4 flex items-start gap-3 text-[12px] leading-5 text-text-primary">
