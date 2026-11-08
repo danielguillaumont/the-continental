@@ -18,6 +18,7 @@ from app.certifications import router as certifications_router
 from app.profile import router as profile_router
 from app.opportunities import router as opportunities_router
 from app.dossier_extraction import router as dossier_extraction_router
+from app.dossier_approval import router as dossier_approval_router
 from app.schemas import (
     EvidenceCreate,
     EvidenceRead,
@@ -690,3 +691,4 @@ app.include_router(certifications_router)
 app.include_router(profile_router)
 app.include_router(opportunities_router)
 app.include_router(dossier_extraction_router)
+app.include_router(dossier_approval_router)

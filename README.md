@@ -234,3 +234,5 @@ Choose **Projects** in the main navigation to create project records, then open 
 ## Development
 
 The Continental is under active development and intentionally public so its progression from structured career data to grounded AI workflows can be followed through the commit history.
+
+> **v0.2 Slice 2D1 (in development):** the backend can apply explicitly selected, source-checked Dossier suggestions without overwriting manual fields. The approval UI and full live-provider verification are still pending.
