@@ -457,3 +457,39 @@ class OpportunityAttribution(Base):
     )
 
     opportunity: Mapped[Opportunity] = relationship(back_populates="attributions")
+
+
+class EvidenceReview(Base):
+    """Explicit owner assertion about an evidence candidate, not independent verification."""
+
+    __tablename__ = "evidence_reviews"
+    __table_args__ = (
+        UniqueConstraint("requirement_id", "evidence_id", name="uq_evidence_reviews_pair"),
+        CheckConstraint("decision IN ('supports', 'not_relevant')", name="ck_evidence_reviews_decision"),
+        CheckConstraint("length(review_note) <= 1200", name="ck_evidence_reviews_note_length"),
+    )
+
+    id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
+    requirement_id: Mapped[UUID] = mapped_column(
+        PGUUID(as_uuid=True), ForeignKey("requirements.id", ondelete="CASCADE"),
+        nullable=False, index=True,
+    )
+    evidence_id: Mapped[UUID] = mapped_column(
+        PGUUID(as_uuid=True), ForeignKey("evidence.id", ondelete="CASCADE"),
+        nullable=False, index=True,
+    )
+    decision: Mapped[str] = mapped_column(String(16), nullable=False)
+    review_note: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    snapshot_fingerprint: Mapped[str] = mapped_column(String(64), nullable=False)
+    requirement_text_snapshot: Mapped[str] = mapped_column(Text, nullable=False)
+    evidence_title_snapshot: Mapped[str] = mapped_column(String(160), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now(),
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False,
+        server_default=func.now(), onupdate=func.now(),
+    )
+
+    requirement: Mapped["Requirement"] = relationship()
+    evidence: Mapped["Evidence"] = relationship()
