@@ -1,4 +1,6 @@
 import type { ExtractionPreview } from "@/types/dossier-extraction";
+import type { EvidenceMatchPreview } from "@/types/dossier-evidence-match";
+import { parseEvidenceMatchPreview } from "@/lib/dossier-evidence-match";
 import type { ReviewedApplyRequest, ReviewedApplyResult } from "@/lib/dossier-approval";
 import type { OpportunityCreatePayload, OpportunityRecord, OpportunityWritePayload, RequirementRecord, RequirementWritePayload } from "@/types/dossier";
 import { DossierHttpError, withDossierTimeout } from "@/lib/dossier-request";
@@ -331,6 +333,15 @@ export async function listOpportunities(): Promise<OpportunityRecord[]> {
 
 export async function getOpportunity(id: string): Promise<OpportunityRecord> {
   return dossierJson<OpportunityRecord>(`${API_BASE_URL}/opportunities/${encodeURIComponent(id)}`, { cache: "no-store" });
+}
+
+/** v0.3: read-only literal skill-tag evidence candidate preview. */
+export async function getOpportunityEvidenceMatchPreview(id: string): Promise<EvidenceMatchPreview> {
+  const response = await dossierJson<unknown>(
+    `${API_BASE_URL}/opportunities/${encodeURIComponent(id)}/evidence-match-preview`,
+    { cache: "no-store" },
+  );
+  return parseEvidenceMatchPreview(response, id);
 }
 
 export async function createOpportunity(payload: OpportunityCreatePayload): Promise<OpportunityRecord> {

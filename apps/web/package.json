@@ -14,7 +14,7 @@
     "test:experiences": "node --experimental-strip-types --test tests/experience-workspace.test.mjs",
     "test:certifications": "node --experimental-strip-types --test tests/certification-workspace.test.mjs",
     "test:profile": "node --experimental-strip-types --test tests/profile-workspace.test.mjs",
-    "test:dossier": "node --experimental-strip-types --test tests/dossier-workspace.test.mjs tests/dossier-extraction.test.mjs tests/dossier-approval.test.mjs tests/dossier-provenance.test.mjs"
+    "test:dossier": "node --experimental-strip-types --test tests/dossier-workspace.test.mjs tests/dossier-extraction.test.mjs tests/dossier-approval.test.mjs tests/dossier-provenance.test.mjs tests/dossier-evidence-match.test.mjs"
   },
   "dependencies": {
     "@fontsource-variable/geist": "5.3.0",
