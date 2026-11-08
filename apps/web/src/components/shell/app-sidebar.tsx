@@ -74,7 +74,7 @@ export function AppSidebar() {
       <div className="border-t border-border-subtle px-5 py-4">
         <div className="flex items-center gap-2 text-[11px] text-text-muted">
           <span className="size-1.5 rounded-full bg-success" />
-          <span>v0.2 · Dossier in development</span>
+          <span>v0.3 · Evidence Match</span>
         </div>
       </div>
     </aside>

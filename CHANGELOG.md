@@ -2,6 +2,10 @@
 
 ## Unreleased — v0.3 Evidence Match
 
+- Slice 3E2B (release candidate): align desktop/mobile version labels, package metadata and recruiter-first README; add the opt-in, manually reviewed fictional screenshot publication workflow and release-candidate checklist. The Git tag and GitHub release remain pending final acceptance.
+- Slice 3E2A: add a bounded browser network diagnostic for the three local Dossier GET requests and reusable screenshot branch handling. A development capture saw one canceled `net::ERR_ABORTED` request and succeeded after a read-only retry; a production-mode capture had zero failed requests or retries. This suggests a development lifecycle effect, not a proven root cause.
+- Slice 3E1: add release acceptance checks and repeatable, identity-verified full-page fictional Dossier screenshots. Validation recorded 126 backend tests, 111 frontend tests, 13 read-only API checks, stable database record counts and independent screenshot-readiness tests; release images require separate human review.
+
 - Slice 3D2: added user-controlled Evidence Match review decisions in Dossier, with explicit supporting/not-relevant reasoning, saved/stale status, safe editing and removal, and reconciliation after ambiguous request failures. Distinguishes candidate discovery from owner-reviewed decisions. Twelve new frontend contract tests; no schema, provider, or dependency changes.
 
 - Slice 3D1: added owner-reviewed supporting/not-relevant decisions for requirement/evidence candidates, clear owner-authored notes, stale-fingerprint detection, explicit reversal and deletion, and an additive PostgreSQL migration. Existing candidate previews remain read-only and unchanged; the review UI is planned for 3D2. No independent verification, fit score or model call.

@@ -1,0 +1,45 @@
+{
+    "version":  "v0.3.0-rc",
+    "captured_at_utc":  "2026-11-08T22:42:25.0582869Z",
+    "based_on_commit":  "6ed4ef2",
+    "note":  "Explicitly fictional local demo, manually inspected after full rendering; not an independently verified career record.",
+    "images":  [
+                   {
+                       "file":  "dossier-v03-cloud-security-desktop.png",
+                       "route":  "/dossier/5c5827de-cfd4-48bc-9a08-fab046b5826b",
+                       "company":  "Cedarline Cloud Operations (fictional)",
+                       "width":  1500,
+                       "height":  3709,
+                       "sha256":  "a98b8dc3979b2bf7315763d58a52ad22ffda68f33c8f0b3566184f49bedea8b8",
+                       "manually_reviewed":  true,
+                       "fictional_demo_confirmed":  true
+                   },
+                   {
+                       "file":  "dossier-v03-application-security-desktop.png",
+                       "route":  "/dossier/cb834bea-00f2-4cd3-9eb7-66fc42b4f6b1",
+                       "company":  "Harborlight Security Products (fictional)",
+                       "width":  1500,
+                       "height":  3733,
+                       "sha256":  "2c0e4120f7f32366c778d2fab6f7ac0793cad8fc610f6eab685676cb3b3b8a2b",
+                       "manually_reviewed":  true,
+                       "fictional_demo_confirmed":  true
+                   },
+                   {
+                       "file":  "dossier-v03-platform-reliability-desktop.png",
+                       "route":  "/dossier/c2868c42-2450-4ac0-8718-1f0a188b9f85",
+                       "company":  "Westhaven Platform Collective (fictional)",
+                       "width":  1500,
+                       "height":  4027,
+                       "sha256":  "06db6479a173887ae33191c543de90d328520b7b74b549b891e4fbbd3d65046f",
+                       "manually_reviewed":  true,
+                       "fictional_demo_confirmed":  true
+                   },
+                   {
+                       "file":  "dossier-v03-evidence-match-hero.png",
+                       "source":  "dossier-v03-cloud-security-desktop.png",
+                       "sha256":  "a5d6a51136444e4881e00aa31cc9fde5ae76a1ee80f697dc491f6e3d89ab813f",
+                       "manually_reviewed":  true,
+                       "fictional_demo_confirmed":  true
+                   }
+               ]
+}
