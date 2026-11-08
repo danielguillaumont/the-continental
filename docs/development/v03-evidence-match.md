@@ -137,3 +137,52 @@ PostgreSQL backup before running `alembic upgrade head`. Never downgrade
 review data casually. Run backend tests plus local PostgreSQL migration checks
 before merging. This slice adds no frontend action yet: 3D2 will integrate
 review/undo controls and preserve the current read-only candidate experience.
+
+
+## Slice 3D2 — Dossier owner review controls (frontend)
+
+The existing Evidence Match panel now fetches the **review options** and **saved
+reviews** independently from the deterministic candidate preview. If review
+endpoints are unavailable, the original read-only preview remains useful.
+
+- A candidate initially reads **Not reviewed** and must not be presented as a
+  confirmed qualification. An owner can explicitly choose **Supports
+  requirement** or **Not relevant** and leave a reviewer-authored explanation.
+  Supporting decisions require at least 10 characters; notes are capped at 1,200.
+- A saved decision and its explanation remain visible and can be edited or
+  removed. Removing a decision never deletes the Evidence record, Project,
+  Experience, or their Skill relationships.
+- Before each save, the UI supplies the fingerprint from the live review
+  options endpoint. The server rejects stale fingerprints with HTTP 409.
+- Old decisions remain visible with a **Stale** state after relevant changes.
+  Reviews no longer in the current bounded candidate list are surfaced as
+  earlier decisions, rather than silently disappearing.
+- Writes are serialized in the UI. A timeout or ambiguous network error
+  blocks further writes until the user refreshes and reconciles saved reviews.
+  There is **no automatic retry of an uncertain PUT or DELETE**.
+- An owner decision does not change the Evidence owner-verification flag and
+  does not establish an externally confirmed credential, proficiency, or job fit.
+
+### 3D2 local acceptance
+
+1. Check `git status` and migrate PostgreSQL to `a1d8c4f60e32` *before* using
+   3D2 (migration was applied in the 3D1 validation phase).
+2. Run all Dossier/frontend tests, ESLint (`--max-warnings 0`), and production
+   Next.js build. No new migration or dependency is expected.
+3. Open the fictional Cloud Security Engineer Dossier. Check the 5 / 4 / 1
+   candidate summary remains unchanged before and after owner reviews.
+4. Save a supporting decision **with a clear explanation**, refresh the page,
+   and confirm the decision and note persist. Change it to **Not relevant** and
+   confirm the change persists after refreshing.
+5. Remove that test review and verify `GET /opportunities/{id}/evidence-reviews`
+   contains no review for that pair; the Evidence record must remain intact.
+6. Confirm a review for a requirement with no candidates cannot be fabricated.
+   Inspect an older/stale review if one is available without modifying the
+   underlying data merely to manufacture the condition.
+7. Verify keyboard navigation, mobile layout, `Refresh reviews`, and a fallback
+   message if the review API is temporarily unavailable. A timed-out write is
+   *unknown* until the saved state is reconciled.
+
+Slice 3E will finish the recruiter-oriented screenshot gallery, clean up
+clearly disposable placeholders *after approval*, simplify the README's first
+screen, and perform final regression/CI checks for `v0.3.0`.

@@ -1,5 +1,7 @@
 import type { ExtractionPreview } from "@/types/dossier-extraction";
 import type { EvidenceMatchPreview } from "@/types/dossier-evidence-match";
+import type { EvidenceReviewCollection, EvidenceReviewOptions, EvidenceReviewRecord, EvidenceReviewWrite } from "@/types/dossier-evidence-review";
+import { parseEvidenceReviewOptions, parseEvidenceReviews, parseEvidenceReviewRecord, validateEvidenceReviewWrite } from "@/lib/dossier-evidence-reviews";
 import { parseEvidenceMatchPreview } from "@/lib/dossier-evidence-match";
 import type { ReviewedApplyRequest, ReviewedApplyResult } from "@/lib/dossier-approval";
 import type { OpportunityCreatePayload, OpportunityRecord, OpportunityWritePayload, RequirementRecord, RequirementWritePayload } from "@/types/dossier";
@@ -342,6 +344,43 @@ export async function getOpportunityEvidenceMatchPreview(id: string): Promise<Ev
     { cache: "no-store" },
   );
   return parseEvidenceMatchPreview(response, id);
+}
+
+/** v0.3D2: owner-review records are distinct from candidate previews and verification. */
+export async function getOpportunityEvidenceReviewOptions(id: string): Promise<EvidenceReviewOptions> {
+  const data = await dossierJson<unknown>(
+    `${API_BASE_URL}/opportunities/${encodeURIComponent(id)}/evidence-review-options`,
+    { cache: "no-store" },
+  );
+  return parseEvidenceReviewOptions(data, id);
+}
+
+export async function getOpportunityEvidenceReviews(id: string): Promise<EvidenceReviewCollection> {
+  const data = await dossierJson<unknown>(
+    `${API_BASE_URL}/opportunities/${encodeURIComponent(id)}/evidence-reviews`,
+    { cache: "no-store" },
+  );
+  return parseEvidenceReviews(data, id);
+}
+
+export async function saveOpportunityEvidenceReview(
+  opportunityId: string, requirementId: string, evidenceId: string, payload: EvidenceReviewWrite,
+): Promise<EvidenceReviewRecord> {
+  const validationError = validateEvidenceReviewWrite(payload);
+  if (validationError) throw new Error(validationError);
+  const data = await dossierJson<unknown>(
+    `${API_BASE_URL}/opportunities/${encodeURIComponent(opportunityId)}/requirements/${encodeURIComponent(requirementId)}/evidence-reviews/${encodeURIComponent(evidenceId)}`,
+    { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...payload, note: payload.note.trim() }) },
+  );
+  return parseEvidenceReviewRecord(data, requirementId, evidenceId);
+}
+
+export async function deleteOpportunityEvidenceReview(
+  opportunityId: string, requirementId: string, evidenceId: string,
+): Promise<void> {
+  return dossierDelete(
+    `${API_BASE_URL}/opportunities/${encodeURIComponent(opportunityId)}/requirements/${encodeURIComponent(requirementId)}/evidence-reviews/${encodeURIComponent(evidenceId)}`,
+  );
 }
 
 export async function createOpportunity(payload: OpportunityCreatePayload): Promise<OpportunityRecord> {
